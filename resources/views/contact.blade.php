@@ -37,7 +37,7 @@
                     <div class="space-y-3">
                         <div class="flex gap-4">
                             <span class="text-indigo-400 select-none">email:</span>
-                            <a class="text-indigo-300 hover:text-white hover:underline transition-all" href="mailto:architect@dev.null">architect@dev.null</a>
+                            <a class="text-indigo-300 hover:text-white hover:underline transition-all" href="mailto:{{ config('services.contact.email') }}">{{ config('services.contact.email') }}</a>
                         </div>
                         <div class="flex gap-4">
                             <span class="text-indigo-400 select-none">location:</span>
@@ -202,7 +202,7 @@
         <div class="md:hidden mt-8 pt-8 border-t border-white/10 space-y-6 col-span-full">
             <div class="space-y-1">
                 <p class="font-mono text-xs text-indigo-400 uppercase tracking-wider">Direct Channel</p>
-                <a class="font-mono text-xl font-semibold text-indigo-300 hover:text-white hover:underline" href="mailto:architect@dev.null">architect@dev.null</a>
+                <a class="font-mono text-xl font-semibold text-indigo-300 hover:text-white hover:underline" href="mailto:{{ config('services.contact.email') }}">{{ config('services.contact.email') }}</a>
             </div>
             <div class="flex gap-6">
                 <a class="font-sans text-sm text-white/60 hover:text-white" href="#github">GitHub</a>

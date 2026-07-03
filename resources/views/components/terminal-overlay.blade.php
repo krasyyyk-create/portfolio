@@ -1,3 +1,16 @@
+<button
+    x-show="!isOpen"
+    x-cloak
+    @click="toggle()"
+    type="button"
+    class="fixed bottom-6 right-6 z-40 p-3.5 text-white/90 hover:text-white bg-indigo-500/90 hover:bg-indigo-500 border border-white/10 hover:border-white/20 transition-all duration-300 rounded-full active:scale-95 cursor-pointer flex items-center justify-center shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40"
+    title="Toggle Systems Terminal"
+>
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+    </svg>
+</button>
+
 <div
     x-show="isOpen"
     x-cloak

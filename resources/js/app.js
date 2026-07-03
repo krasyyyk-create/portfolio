@@ -1,6 +1,10 @@
 import Alpine from 'alpinejs';
+import avatarCropper from './avatarCropper';
+import 'cropperjs/dist/cropper.css';
 
 window.Alpine = Alpine;
+
+Alpine.data('avatarCropper', avatarCropper);
 
 Alpine.data('terminalOverlay', () => ({
     isOpen: false,

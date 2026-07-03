@@ -135,3 +135,27 @@ select {
     background-position: right 1rem center;
     background-size: 1.5em;
 }
+
+.cropper-view-box,
+.cropper-face {
+    border-radius: 50%;
+}
+
+.cropper-view-box {
+    box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.9);
+    outline: 0;
+}
+
+.cropper-line,
+.cropper-point {
+    background-color: #818cf8;
+}
+
+.cropper-bg {
+    background-image: none;
+    background-color: #020617;
+}
+
+.cropper-modal {
+    background-color: rgba(2, 6, 23, 0.65);
+}

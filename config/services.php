@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'api_sports' => [
+        'key' => env('API_SPORTS_KEY'),
+        'base_url' => env('API_SPORTS_BASE_URL', 'https://v1.formula-1.api-sports.io'),
+    ],
+
+    'contact' => [
+        'email' => env('CONTACT_EMAIL', 'krasyyy.k@gmail.com'),
+    ],
+
 ];
