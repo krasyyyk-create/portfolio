@@ -39,12 +39,6 @@
         <div class="flex items-center gap-3 md:gap-4 shrink-0">
             @auth
                 <div class="hidden md:flex items-center gap-3">
-                    <a
-                        href="{{ route('posts.mine') }}"
-                        class="font-mono text-sm text-white/60 hover:text-white border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all whitespace-nowrap"
-                    >
-                        &gt; my posts
-                    </a>
                     @if (auth()->user()->isAdmin())
                         <a
                             href="{{ route('admin.dashboard') }}"

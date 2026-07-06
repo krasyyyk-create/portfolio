@@ -89,7 +89,7 @@
             @checked(old('is_published', $isEdit ? $post->is_published : true))
             class="w-4 h-4 rounded border-white/20 bg-slate-950/20 text-indigo-500 focus:ring-indigo-400/50"
         />
-        <span class="font-sans text-sm text-white/70">Publish immediately</span>
+        <span class="font-sans text-sm text-white/70">{{ $isEdit ? 'Published' : 'Publish immediately' }}</span>
     </label>
 
     <button

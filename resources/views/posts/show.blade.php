@@ -1,9 +1,19 @@
 <x-layouts.app :title="'DEV_ARCHITECT — ' . $post->title">
     <article class="max-w-3xl mx-auto space-y-8">
         <div class="space-y-4">
-            <a href="{{ route('posts.index') }}" class="font-mono text-xs text-white/40 hover:text-white transition-colors inline-flex items-center gap-1">
-                <span>&larr;</span> back to posts
-            </a>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <a href="{{ route('posts.index') }}" class="font-mono text-xs text-white/40 hover:text-white transition-colors inline-flex items-center gap-1">
+                    <span>&larr;</span> back to posts
+                </a>
+                @can('update', $post)
+                    <a
+                        href="{{ route('posts.edit', $post) }}"
+                        class="font-mono text-xs text-indigo-300 hover:text-white border border-indigo-400/30 hover:border-indigo-400/50 bg-indigo-500/10 hover:bg-indigo-500/20 px-3 py-1.5 rounded-lg transition-all"
+                    >
+                        edit post
+                    </a>
+                @endcan
+            </div>
 
             <div class="space-y-3">
                 <time class="font-mono text-xs text-indigo-400 uppercase tracking-wider">

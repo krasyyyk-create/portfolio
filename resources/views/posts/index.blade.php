@@ -14,12 +14,20 @@
                     </p>
                 </div>
                 @auth
-                    <a
-                        href="{{ route('posts.create') }}"
-                        class="inline-flex items-center justify-center shrink-0 bg-indigo-500/85 hover:bg-indigo-500 border border-white/10 text-white font-sans text-sm font-semibold px-5 py-2.5 rounded-lg active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/25"
-                    >
-                        + Write Post
-                    </a>
+                    <div class="flex flex-wrap items-center gap-2 shrink-0">
+                        <a
+                            href="{{ route('posts.mine') }}"
+                            class="inline-flex items-center justify-center font-mono text-sm text-white/60 hover:text-white border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-lg transition-all"
+                        >
+                            &gt; my posts
+                        </a>
+                        <a
+                            href="{{ route('posts.create') }}"
+                            class="inline-flex items-center justify-center bg-indigo-500/85 hover:bg-indigo-500 border border-white/10 text-white font-sans text-sm font-semibold px-5 py-2.5 rounded-lg active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/25"
+                        >
+                            + Write Post
+                        </a>
+                    </div>
                 @endauth
             </div>
         </div>
