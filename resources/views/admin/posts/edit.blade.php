@@ -64,16 +64,7 @@
 
                 <x-admin.post-category-picker :categories="$categories" :selected-ids="$post->categories->pluck('id')" />
 
-                <label class="flex items-center gap-3 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        name="is_published"
-                        value="1"
-                        @checked(old('is_published', $post->is_published))
-                        class="w-4 h-4 rounded border-white/20 bg-slate-950/20 text-indigo-500 focus:ring-indigo-400/50"
-                    />
-                    <span class="font-sans text-sm text-white/70">Published</span>
-                </label>
+                <x-admin.post-published-fields :post="$post" />
 
                 <button
                     type="submit"

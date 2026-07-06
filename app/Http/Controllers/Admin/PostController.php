@@ -36,7 +36,7 @@ class PostController extends Controller
             'excerpt' => $validated['excerpt'] ?? null,
             'content' => $validated['content'],
             'is_published' => $request->boolean('is_published'),
-            'published_at' => $request->boolean('is_published') ? now() : null,
+            'published_at' => Post::resolvePublishedAt($request),
         ]);
 
         if ($request->hasFile('image')) {
@@ -63,17 +63,13 @@ class PostController extends Controller
     {
         $validated = Post::validateInput($request, $post);
 
-        $isPublished = $request->boolean('is_published');
-
         $post->fill([
             'title' => $validated['title'],
             'slug' => Post::resolveUniqueSlug($validated['slug'] ?? null, $validated['title'], $post->id),
             'excerpt' => $validated['excerpt'] ?? null,
             'content' => $validated['content'],
-            'is_published' => $isPublished,
-            'published_at' => $isPublished
-                ? ($post->published_at ?? now())
-                : null,
+            'is_published' => $request->boolean('is_published'),
+            'published_at' => Post::resolvePublishedAt($request, $post),
         ]);
 
         if ($request->boolean('remove_image')) {

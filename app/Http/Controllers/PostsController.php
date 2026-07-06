@@ -13,6 +13,7 @@ class PostsController extends Controller
     public function index(): View
     {
         $activeCategory = null;
+        $search = trim((string) request('q', ''));
 
         if ($categorySlug = request('category')) {
             $activeCategory = Category::where('slug', $categorySlug)->firstOrFail();
@@ -25,6 +26,7 @@ class PostsController extends Controller
                 'categories',
                 fn ($categoryQuery) => $categoryQuery->where('categories.id', $activeCategory->id)
             ))
+            ->when($search !== '', fn ($query) => $query->search($search))
             ->latest('published_at')
             ->paginate(9)
             ->withQueryString();
@@ -33,6 +35,7 @@ class PostsController extends Controller
             'posts' => $posts,
             'categories' => Category::withCount(['posts' => fn ($query) => $query->published()])->orderBy('name')->get(),
             'activeCategory' => $activeCategory,
+            'search' => $search,
         ]);
     }
 

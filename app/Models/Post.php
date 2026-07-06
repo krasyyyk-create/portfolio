@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -74,6 +75,24 @@ class Post extends Model
             ->where('published_at', '<=', now());
     }
 
+    public function scopeSearch(Builder $query, ?string $term): Builder
+    {
+        $term = trim((string) $term);
+
+        if ($term === '') {
+            return $query;
+        }
+
+        $like = '%'.addcslashes($term, '%_\\').'%';
+
+        return $query->where(function (Builder $searchQuery) use ($like) {
+            $searchQuery
+                ->where('title', 'like', $like)
+                ->orWhereHas('author', fn (Builder $authorQuery) => $authorQuery->where('name', 'like', $like))
+                ->orWhereHas('categories', fn (Builder $categoryQuery) => $categoryQuery->where('name', 'like', $like));
+        });
+    }
+
     /**
      * @return Attribute<?string, never>
      */
@@ -124,6 +143,7 @@ class Post extends Model
             'remove_image' => ['sometimes', 'boolean'],
             'content' => ['nullable', 'string'],
             'is_published' => ['sometimes', 'boolean'],
+            'published_at' => ['nullable', 'date'],
             'category_ids' => ['nullable', 'array'],
             'category_ids.*' => ['integer', 'exists:categories,id'],
         ]);
@@ -142,6 +162,19 @@ class Post extends Model
         $validated['content'] = $hasContent ? $validated['content'] : '';
 
         return $validated;
+    }
+
+    public static function resolvePublishedAt(Request $request, ?Post $existing = null): ?Carbon
+    {
+        if (! $request->boolean('is_published')) {
+            return null;
+        }
+
+        if ($request->filled('published_at')) {
+            return Carbon::parse($request->input('published_at'));
+        }
+
+        return $existing?->published_at ?? now();
     }
 
     public static function resolveUniqueSlug(?string $slug, string $title, ?int $ignoreId = null): string

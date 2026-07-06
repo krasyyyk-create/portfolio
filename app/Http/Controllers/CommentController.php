@@ -6,6 +6,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class CommentController extends Controller
 {
@@ -14,13 +15,28 @@ class CommentController extends Controller
         abort_unless($post->is_published && $post->published_at?->isPast(), 404);
 
         $validated = $request->validate([
-            'body' => ['required', 'string', 'max:2000'],
+            'body' => ['nullable', 'string', 'max:2000', 'required_without:image'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp,gif', 'max:4096'],
         ]);
 
-        $post->comments()->create([
+        $body = trim($validated['body'] ?? '');
+
+        if ($this->commentBodyIsEmpty($body) && ! $request->hasFile('image')) {
+            throw ValidationException::withMessages([
+                'body' => 'Add a comment or attach an image.',
+            ]);
+        }
+
+        $comment = $post->comments()->make([
             'user_id' => $request->user()->id,
-            'body' => $validated['body'],
+            'body' => $body,
         ]);
+
+        if ($request->hasFile('image')) {
+            $comment->storeUploadedImage($request->file('image'));
+        }
+
+        $comment->save();
 
         return redirect()
             ->route('posts.show', $post)
@@ -40,5 +56,10 @@ class CommentController extends Controller
             ->route('posts.show', $post)
             ->withFragment('comments')
             ->with('success', 'Comment removed.');
+    }
+
+    private function commentBodyIsEmpty(string $body): bool
+    {
+        return trim(strip_tags($body)) === '';
     }
 }

@@ -32,10 +32,52 @@
             </div>
         </div>
 
+        <form
+            action="{{ route('posts.index') }}"
+            method="GET"
+            class="glass-card border border-white/10 rounded-xl p-4 flex flex-col sm:flex-row gap-3"
+        >
+            @if ($activeCategory)
+                <input type="hidden" name="category" value="{{ $activeCategory->slug }}">
+            @endif
+
+            <label for="post-search" class="sr-only">Search posts</label>
+            <div class="relative flex-grow">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input
+                    id="post-search"
+                    type="search"
+                    name="q"
+                    value="{{ $search }}"
+                    placeholder="Search by title, category, or creator..."
+                    class="w-full bg-white/5 border border-white/10 text-white pl-10 pr-4 py-2.5 rounded-lg focus:outline-none focus:border-indigo-400/50 focus:bg-white/10 transition-all font-sans text-sm placeholder:text-white/30"
+                />
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <button
+                    type="submit"
+                    class="inline-flex items-center justify-center bg-indigo-500/85 hover:bg-indigo-500 border border-white/10 text-white font-mono text-sm px-5 py-2.5 rounded-lg active:scale-[0.98] transition-all"
+                >
+                    search
+                </button>
+                @if ($search !== '')
+                    <a
+                        href="{{ route('posts.index', $activeCategory ? ['category' => $activeCategory->slug] : []) }}"
+                        class="inline-flex items-center justify-center font-mono text-sm text-white/60 hover:text-white border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all"
+                    >
+                        clear
+                    </a>
+                @endif
+            </div>
+        </form>
+
         @if ($categories->isNotEmpty())
             <div class="flex flex-wrap items-center gap-2">
                 <a
-                    href="{{ route('posts.index') }}"
+                    href="{{ route('posts.index', $search ? ['q' => $search] : []) }}"
                     @class([
                         'inline-flex font-mono text-xs px-3 py-1.5 rounded-full border transition-colors',
                         'bg-indigo-500/20 text-white border-indigo-400/30' => ! $activeCategory,
@@ -46,7 +88,10 @@
                 </a>
                 @foreach ($categories as $category)
                     <a
-                        href="{{ route('posts.index', ['category' => $category->slug]) }}"
+                        href="{{ route('posts.index', array_filter([
+                            'category' => $category->slug,
+                            'q' => $search ?: null,
+                        ])) }}"
                         @class([
                             'inline-flex font-mono text-xs px-3 py-1.5 rounded-full border transition-colors',
                             'bg-indigo-500/20 text-white border-indigo-400/30' => $activeCategory?->id === $category->id,
@@ -60,7 +105,14 @@
             </div>
         @endif
 
-        @if ($activeCategory)
+        @if ($search !== '')
+            <p class="font-mono text-xs text-white/50">
+                Showing results for <span class="text-indigo-300">&ldquo;{{ $search }}&rdquo;</span>
+                @if ($activeCategory)
+                    in <span class="text-indigo-300">{{ $activeCategory->name }}</span>
+                @endif
+            </p>
+        @elseif ($activeCategory)
             <p class="font-mono text-xs text-white/50">
                 Showing posts in <span class="text-indigo-300">{{ $activeCategory->name }}</span>
             </p>
@@ -69,7 +121,9 @@
         @if ($posts->isEmpty())
             <div class="glass-card rounded-2xl p-12 text-center">
                 <p class="font-mono text-sm text-white/40">
-                    @if ($activeCategory)
+                    @if ($search !== '')
+                        No posts match your search.
+                    @elseif ($activeCategory)
                         No posts in this category yet.
                     @else
                         No posts published yet. Check back soon.

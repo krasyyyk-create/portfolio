@@ -4,6 +4,10 @@
     'value' => '',
     'label' => null,
     'hint' => null,
+    'minHeight' => '280px',
+    'maxHeight' => '480px',
+    'placeholder' => 'Start writing...',
+    'maxlength' => null,
 ])
 
 @php
@@ -73,8 +77,9 @@
             x-ref="editor"
             contenteditable="true"
             @input="sync()"
-            class="wysiwyg-content min-h-[280px] max-h-[480px] overflow-y-auto px-4 py-3 font-sans text-sm text-white/90 leading-relaxed outline-none"
-            data-placeholder="Start writing..."
+            class="wysiwyg-content overflow-y-auto px-4 py-3 font-sans text-sm text-white/90 leading-relaxed outline-none"
+            style="min-height: {{ $minHeight }}; max-height: {{ $maxHeight }};"
+            data-placeholder="{{ $placeholder }}"
         ></div>
 
         <textarea
@@ -83,7 +88,8 @@
             x-model="htmlSource"
             @input="sync()"
             spellcheck="false"
-            class="wysiwyg-html-source w-full min-h-[280px] max-h-[480px] overflow-y-auto px-4 py-3 font-mono text-xs text-white/90 leading-relaxed outline-none resize-y bg-transparent border-0"
+            class="wysiwyg-html-source w-full overflow-y-auto px-4 py-3 font-mono text-xs text-white/90 leading-relaxed outline-none resize-y bg-transparent border-0"
+            style="min-height: {{ $minHeight }}; max-height: {{ $maxHeight }};"
             placeholder="<p>Edit raw HTML here...</p>"
         ></textarea>
 
@@ -91,6 +97,7 @@
             x-ref="textarea"
             id="{{ $fieldId }}"
             name="{{ $name }}"
+            @if ($maxlength) maxlength="{{ $maxlength }}" @endif
             class="hidden"
             rows="14"
         ></textarea>
