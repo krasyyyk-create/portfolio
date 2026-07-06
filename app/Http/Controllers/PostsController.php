@@ -27,7 +27,7 @@ class PostsController extends Controller
                 fn ($categoryQuery) => $categoryQuery->where('categories.id', $activeCategory->id)
             ))
             ->when($search !== '', fn ($query) => $query->search($search))
-            ->latest('published_at')
+            ->orderedForDisplay()
             ->paginate(9)
             ->withQueryString();
 
@@ -44,11 +44,7 @@ class PostsController extends Controller
         abort_unless($post->is_published && $post->published_at?->isPast(), 404);
 
         return view('posts.show', [
-            'post' => $post->load([
-                'author',
-                'categories',
-                'comments' => fn ($query) => $query->with('author'),
-            ]),
+            'post' => $post->load(['author', 'categories'])->loadCommentTree(),
         ]);
     }
 

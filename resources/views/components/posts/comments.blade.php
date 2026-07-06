@@ -29,7 +29,7 @@
             <x-wysiwyg-editor
                 name="body"
                 id="comment-body"
-                :value="old('body', '')"
+                :value="old('parent_id') ? '' : old('body', '')"
                 label='<span class="font-mono uppercase tracking-wider text-white/50">Add a comment</span>'
                 hint="Use the toolbar to format your comment."
                 min-height="96px"
@@ -87,86 +87,12 @@
         </div>
     @endauth
 
-    @if ($post->comments->isEmpty())
+    @if ($post->topLevelComments->isEmpty())
         <p class="font-mono text-sm text-white/40">No comments yet. Be the first to respond.</p>
     @else
         <ul class="space-y-4">
-            @foreach ($post->comments as $comment)
-                <li class="glass-card border border-white/10 rounded-xl p-5">
-                    <div class="flex items-start gap-4">
-                        <div class="shrink-0">
-                            @if ($comment->author->avatar_url)
-                                <img
-                                    src="{{ $comment->author->avatar_url }}"
-                                    alt="{{ $comment->author->name }}"
-                                    class="w-10 h-10 rounded-full object-cover border border-white/10"
-                                />
-                            @else
-                                <div class="w-10 h-10 rounded-full bg-indigo-500/30 border border-indigo-400/30 flex items-center justify-center font-sans text-sm font-bold text-indigo-300">
-                                    {{ strtoupper(substr($comment->author->name, 0, 1)) }}
-                                </div>
-                            @endif
-                        </div>
-
-                        <div class="flex-grow min-w-0 space-y-2">
-                            <div class="flex flex-wrap items-center justify-between gap-2">
-                                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                    <span class="font-sans text-sm font-semibold text-white">{{ $comment->author->name }}</span>
-                                    <time class="font-mono text-[10px] text-white/40" datetime="{{ $comment->created_at->toIso8601String() }}">
-                                        {{ $comment->created_at->diffForHumans() }}
-                                    </time>
-                                </div>
-
-                                @can('delete', $comment)
-                                    <form
-                                        action="{{ route('posts.comments.destroy', [$post, $comment]) }}"
-                                        method="POST"
-                                        onsubmit="return confirm('Delete this comment?')"
-                                    >
-                                        @csrf
-                                        @method('DELETE')
-                                        <button
-                                            type="submit"
-                                            class="font-mono text-[10px] text-white/30 hover:text-red-400 transition-colors"
-                                        >
-                                            delete
-                                        </button>
-                                    </form>
-                                @endcan
-                            </div>
-
-                            @if ($comment->body)
-                                <div class="wysiwyg-content font-sans text-sm text-white/80 leading-relaxed">
-                                    {!! $comment->body !!}
-                                </div>
-                            @endif
-
-                            @if ($comment->image_url)
-                                <figure class="{{ $comment->body ? 'mt-2' : '' }}">
-                                    @if ($comment->imageNeedsCropDisplay())
-                                        <div class="relative w-[min(480px,100%)] aspect-[3/2] overflow-hidden rounded-lg border border-white/10">
-                                            <img
-                                                src="{{ $comment->image_url }}"
-                                                alt="Comment attachment"
-                                                class="absolute inset-0 w-full h-full object-cover"
-                                                loading="lazy"
-                                            />
-                                        </div>
-                                    @else
-                                        <img
-                                            src="{{ $comment->image_url }}"
-                                            alt="Comment attachment"
-                                            width="{{ $comment->image_width }}"
-                                            height="{{ $comment->image_height }}"
-                                            class="rounded-lg border border-white/10 max-w-full h-auto"
-                                            loading="lazy"
-                                        />
-                                    @endif
-                                </figure>
-                            @endif
-                        </div>
-                    </div>
-                </li>
+            @foreach ($post->topLevelComments as $comment)
+                <x-posts.comment :comment="$comment" :post="$post" />
             @endforeach
         </ul>
     @endif

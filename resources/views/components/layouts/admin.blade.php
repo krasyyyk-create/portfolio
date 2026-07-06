@@ -72,6 +72,7 @@
                 <a href="{{ route('admin.dashboard') }}" @class(['flex-1 text-center font-mono text-xs py-3 transition-colors', 'text-indigo-400 border-b-2 border-indigo-400' => request()->routeIs('admin.dashboard'), 'text-white/50' => ! request()->routeIs('admin.dashboard')])>dashboard</a>
                 <a href="{{ route('admin.users.index') }}" @class(['flex-1 text-center font-mono text-xs py-3 transition-colors', 'text-indigo-400 border-b-2 border-indigo-400' => request()->routeIs('admin.users.*'), 'text-white/50' => ! request()->routeIs('admin.users.*')])>users</a>
                 <a href="{{ route('admin.posts.index') }}" @class(['flex-1 text-center font-mono text-xs py-3 transition-colors', 'text-indigo-400 border-b-2 border-indigo-400' => request()->routeIs('admin.posts.*'), 'text-white/50' => ! request()->routeIs('admin.posts.*')])>posts</a>
+                <a href="{{ route('admin.reported.index') }}" @class(['flex-1 text-center font-mono text-xs py-3 transition-colors', 'text-indigo-400 border-b-2 border-indigo-400' => request()->routeIs('admin.reported.*'), 'text-white/50' => ! request()->routeIs('admin.reported.*')])>reported</a>
             </nav>
 
             <main class="flex-1 p-6 md:p-8 overflow-auto">

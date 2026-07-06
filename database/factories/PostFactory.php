@@ -39,4 +39,22 @@ class PostFactory extends Factory
             'published_at' => null,
         ]);
     }
+
+    public function pinned(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_pinned' => true,
+            'pinned_at' => now(),
+            'pinned_until' => now()->addDays(7),
+        ]);
+    }
+
+    public function pinExpired(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_pinned' => true,
+            'pinned_at' => now()->subDays(10),
+            'pinned_until' => now()->subDay(),
+        ]);
+    }
 }

@@ -223,3 +223,103 @@ test('deleting a comment removes its stored image', function () {
 
     Storage::disk('public')->assertMissing($path);
 });
+
+test('authenticated users can reply to a comment', function () {
+    $user = User::factory()->create();
+    $post = Post::factory()->create();
+    $parent = Comment::factory()->create([
+        'post_id' => $post->id,
+        'body' => 'Original comment.',
+    ]);
+
+    $this->actingAs($user)
+        ->post(route('posts.comments.store', $post), [
+            'body' => 'Thanks for sharing!',
+            'parent_id' => $parent->id,
+        ])
+        ->assertRedirect(route('posts.show', $post).'#comment-'.$parent->id);
+
+    $this->assertDatabaseHas('comments', [
+        'post_id' => $post->id,
+        'user_id' => $user->id,
+        'parent_id' => $parent->id,
+        'body' => 'Thanks for sharing!',
+    ]);
+});
+
+test('users can reply with an image attachment', function () {
+    Storage::fake('public');
+
+    $user = User::factory()->create();
+    $post = Post::factory()->create();
+    $parent = Comment::factory()->create(['post_id' => $post->id]);
+    $image = UploadedFile::fake()->image('reaction.gif', 200, 150);
+
+    $this->actingAs($user)
+        ->post(route('posts.comments.store', $post), [
+            'body' => 'Look at this.',
+            'parent_id' => $parent->id,
+            'image' => $image,
+        ])
+        ->assertRedirect(route('posts.show', $post).'#comment-'.$parent->id);
+
+    $reply = Comment::query()->where('parent_id', $parent->id)->first();
+
+    expect($reply)->not->toBeNull()
+        ->and($reply->image_path)->not->toBeNull();
+
+    Storage::disk('public')->assertExists($reply->image_path);
+});
+
+test('users cannot reply to comments on other posts', function () {
+    $user = User::factory()->create();
+    $post = Post::factory()->create();
+    $otherPost = Post::factory()->create();
+    $foreignComment = Comment::factory()->create(['post_id' => $otherPost->id]);
+
+    $this->actingAs($user)
+        ->post(route('posts.comments.store', $post), [
+            'body' => 'Sneaky reply.',
+            'parent_id' => $foreignComment->id,
+        ])
+        ->assertSessionHasErrors('parent_id');
+});
+
+test('published post page shows nested replies', function () {
+    $post = Post::factory()->create();
+    $parent = Comment::factory()->create([
+        'post_id' => $post->id,
+        'body' => 'Top-level comment.',
+    ]);
+    Comment::factory()->create([
+        'post_id' => $post->id,
+        'parent_id' => $parent->id,
+        'body' => 'Nested reply.',
+    ]);
+
+    $this->get(route('posts.show', $post))
+        ->assertOk()
+        ->assertSee('Top-level comment.')
+        ->assertSee('Nested reply.')
+        ->assertSee('Reply');
+});
+
+test('deleting a parent comment removes its replies', function () {
+    $user = User::factory()->create();
+    $post = Post::factory()->create();
+    $parent = Comment::factory()->create([
+        'post_id' => $post->id,
+        'user_id' => $user->id,
+    ]);
+    $reply = Comment::factory()->create([
+        'post_id' => $post->id,
+        'parent_id' => $parent->id,
+    ]);
+
+    $this->actingAs($user)
+        ->delete(route('posts.comments.destroy', [$post, $parent]))
+        ->assertRedirect();
+
+    $this->assertDatabaseMissing('comments', ['id' => $parent->id]);
+    $this->assertDatabaseMissing('comments', ['id' => $reply->id]);
+});

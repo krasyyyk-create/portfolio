@@ -65,6 +65,16 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class);
+    }
+
+    public function moderationNotifications(): HasMany
+    {
+        return $this->hasMany(ModerationNotification::class);
+    }
+
     /**
      * @return Attribute<?string, never>
      */

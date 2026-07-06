@@ -22,6 +22,7 @@
                             <th class="px-6 py-3 font-mono text-xs text-white/40 uppercase tracking-wider">Categories</th>
                             <th class="px-6 py-3 font-mono text-xs text-white/40 uppercase tracking-wider">Author</th>
                             <th class="px-6 py-3 font-mono text-xs text-white/40 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 font-mono text-xs text-white/40 uppercase tracking-wider">Pinned</th>
                             <th class="px-6 py-3 font-mono text-xs text-white/40 uppercase tracking-wider">Published</th>
                             <th class="px-6 py-3 font-mono text-xs text-white/40 uppercase tracking-wider text-right">Actions</th>
                         </tr>
@@ -56,6 +57,58 @@
                                         {{ $post->is_published ? 'published' : 'draft' }}
                                     </span>
                                 </td>
+                                <td class="px-6 py-3 align-top min-w-[11rem]">
+                                    @if ($post->isCurrentlyPinned())
+                                        <div class="space-y-2">
+                                            <span class="inline-flex items-center gap-1.5 font-mono text-[11px] px-2.5 py-1 rounded-full border bg-amber-500/20 text-amber-300 border-amber-400/30">
+                                                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                                    <path d="M12 17v5"/>
+                                                    <path d="M9 3h6l1 7h4l-7 8-7-8h4z"/>
+                                                </svg>
+                                                pinned
+                                            </span>
+                                            <p class="font-mono text-[10px] text-white/40">
+                                                until {{ $post->pinned_until->format('M j, Y') }}
+                                            </p>
+                                            <form action="{{ route('admin.posts.toggle-pin', $post) }}" method="POST">
+                                                @csrf
+                                                <button
+                                                    type="submit"
+                                                    class="font-mono text-[10px] text-white/50 hover:text-white border border-white/10 hover:border-white/20 px-2 py-1 rounded-md transition-all cursor-pointer"
+                                                >
+                                                    unpin
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @else
+                                        <form action="{{ route('admin.posts.toggle-pin', $post) }}" method="POST" class="space-y-2">
+                                            @csrf
+                                            <label class="block font-mono text-[10px] text-white/40 uppercase tracking-wider">
+                                                Pin duration
+                                            </label>
+                                            <select
+                                                name="pin_duration_days"
+                                                class="w-full rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 font-mono text-[11px] text-white focus:outline-none focus:border-indigo-400/50"
+                                            >
+                                                <option value="1">1 day</option>
+                                                <option value="3">3 days</option>
+                                                <option value="7" selected>7 days</option>
+                                                <option value="14">14 days</option>
+                                                <option value="30">30 days (max)</option>
+                                            </select>
+                                            <button
+                                                type="submit"
+                                                class="w-full inline-flex items-center justify-center gap-1.5 font-mono text-[11px] px-2.5 py-1.5 rounded-lg border bg-white/5 text-white/60 border-white/10 hover:text-white hover:border-white/20 transition-all cursor-pointer"
+                                            >
+                                                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                    <path d="M12 17v5"/>
+                                                    <path d="M9 3h6l1 7h4l-7 8-7-8h4z"/>
+                                                </svg>
+                                                pin
+                                            </button>
+                                        </form>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-3 font-mono text-xs text-white/40">
                                     {{ $post->published_at?->format('M j, Y') ?? '—' }}
                                 </td>
@@ -86,7 +139,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-8 text-center font-mono text-sm text-white/40">No posts yet</td>
+                                <td colspan="7" class="px-6 py-8 text-center font-mono text-sm text-white/40">No posts yet</td>
                             </tr>
                         @endforelse
                     </tbody>

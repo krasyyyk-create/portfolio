@@ -15,15 +15,27 @@
                 @endcan
             </div>
 
-            <div class="space-y-3">
-                <time class="font-mono text-xs text-indigo-400 uppercase tracking-wider">
-                    {{ $post->published_at->format('F j, Y') }}
-                </time>
-                <h1 class="font-sans text-3xl md:text-4xl font-bold text-white leading-tight">{{ $post->title }}</h1>
-                @if ($post->categories->isNotEmpty())
-                    <x-post-categories :categories="$post->categories" />
-                @endif
-                <p class="font-mono text-sm text-white/50">by {{ $post->author->name }}</p>
+            <div class="flex items-start justify-between gap-4">
+                <div class="space-y-3 min-w-0 flex-1">
+                    <time class="font-mono text-xs text-indigo-400 uppercase tracking-wider">
+                        {{ $post->published_at->format('F j, Y') }}
+                    </time>
+                    <h1 class="font-sans text-3xl md:text-4xl font-bold text-white leading-tight">{{ $post->title }}</h1>
+                    @if ($post->categories->isNotEmpty())
+                        <x-post-categories :categories="$post->categories" />
+                    @endif
+                    <p class="font-mono text-sm text-white/50">by {{ $post->author->name }}</p>
+                </div>
+
+                @auth
+                    @if (auth()->id() !== $post->user_id)
+                        <x-report-button
+                            :action="route('posts.report', $post)"
+                            label="Report this post"
+                            size="md"
+                        />
+                    @endif
+                @endauth
             </div>
         </div>
 

@@ -3,13 +3,16 @@
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\ReportedContentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ModerationNotificationController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RacesController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('home'))->name('home');
@@ -29,6 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/posts/{post:slug}', [PostsController::class, 'destroy'])->name('posts.destroy');
     Route::post('/posts/{post:slug}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
     Route::delete('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'destroy'])->name('posts.comments.destroy');
+    Route::post('/posts/{post:slug}/report', [ReportController::class, 'storePost'])->name('posts.report');
+    Route::post('/posts/{post:slug}/comments/{comment}/report', [ReportController::class, 'storeComment'])->name('posts.comments.report');
+    Route::post('/moderation-notifications/{notification}/read', [ModerationNotificationController::class, 'markRead'])->name('moderation-notifications.read');
 });
 
 Route::get('/posts/{post:slug}', [PostsController::class, 'show'])->name('posts.show');
@@ -65,5 +71,10 @@ Route::prefix('admin')
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         Route::resource('posts', PostController::class)->except(['show']);
+        Route::post('/posts/{post}/toggle-pin', [PostController::class, 'togglePin'])->name('posts.toggle-pin');
         Route::resource('categories', CategoryController::class)->except(['show']);
+        Route::get('/reported', [ReportedContentController::class, 'index'])->name('reported.index');
+        Route::post('/reported/{report}/draft', [ReportedContentController::class, 'draft'])->name('reported.draft');
+        Route::post('/reported/{report}/dismiss', [ReportedContentController::class, 'dismiss'])->name('reported.dismiss');
+        Route::delete('/reported/{report}', [ReportedContentController::class, 'destroy'])->name('reported.destroy');
     });

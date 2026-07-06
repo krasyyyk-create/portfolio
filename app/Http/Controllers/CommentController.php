@@ -6,6 +6,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class CommentController extends Controller
@@ -17,6 +18,11 @@ class CommentController extends Controller
         $validated = $request->validate([
             'body' => ['nullable', 'string', 'max:2000', 'required_without:image'],
             'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp,gif', 'max:4096'],
+            'parent_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('comments', 'id')->where(fn ($query) => $query->where('post_id', $post->id)),
+            ],
         ]);
 
         $body = trim($validated['body'] ?? '');
@@ -29,6 +35,7 @@ class CommentController extends Controller
 
         $comment = $post->comments()->make([
             'user_id' => $request->user()->id,
+            'parent_id' => $validated['parent_id'] ?? null,
             'body' => $body,
         ]);
 
@@ -38,10 +45,14 @@ class CommentController extends Controller
 
         $comment->save();
 
+        $fragment = $comment->parent_id
+            ? 'comment-'.$comment->parent_id
+            : 'comments';
+
         return redirect()
             ->route('posts.show', $post)
-            ->withFragment('comments')
-            ->with('success', 'Comment posted.');
+            ->withFragment($fragment)
+            ->with('success', $comment->parent_id ? 'Reply posted.' : 'Comment posted.');
     }
 
     public function destroy(Post $post, Comment $comment): RedirectResponse

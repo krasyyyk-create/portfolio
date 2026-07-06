@@ -14,7 +14,7 @@ class PostController extends Controller
     public function index(): View
     {
         return view('admin.posts.index', [
-            'posts' => Post::with(['author', 'categories'])->latest()->paginate(15),
+            'posts' => Post::with(['author', 'categories'])->orderedForDisplay()->paginate(15),
         ]);
     }
 
@@ -96,5 +96,26 @@ class PostController extends Controller
         return redirect()
             ->route('admin.posts.index')
             ->with('success', "Post \"{$title}\" deleted successfully.");
+    }
+
+    public function togglePin(Request $request, Post $post): RedirectResponse
+    {
+        if ($post->isCurrentlyPinned()) {
+            $post->unpin();
+
+            return redirect()
+                ->route('admin.posts.index')
+                ->with('success', "Post \"{$post->title}\" unpinned.");
+        }
+
+        $validated = $request->validate([
+            'pin_duration_days' => ['required', 'integer', 'min:1', 'max:'.Post::MAX_PIN_DAYS],
+        ]);
+
+        $post->pinForDays($validated['pin_duration_days']);
+
+        return redirect()
+            ->route('admin.posts.index')
+            ->with('success', "Post \"{$post->title}\" pinned for {$validated['pin_duration_days']} day(s).");
     }
 }

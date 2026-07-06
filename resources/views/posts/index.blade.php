@@ -154,9 +154,20 @@
 
                         <div class="p-6 flex flex-col flex-grow space-y-4">
                             <div class="space-y-2 flex-grow">
-                                <time class="font-mono text-[10px] text-indigo-400 uppercase tracking-wider">
-                                    {{ $post->published_at->format('M j, Y') }}
-                                </time>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <time class="font-mono text-[10px] text-indigo-400 uppercase tracking-wider">
+                                        {{ $post->published_at->format('M j, Y') }}
+                                    </time>
+                                    @if ($post->isCurrentlyPinned())
+                                        <span class="inline-flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded-full border bg-amber-500/15 text-amber-300 border-amber-400/25 uppercase tracking-wider">
+                                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                                <path d="M12 17v5"/>
+                                                <path d="M9 3h6l1 7h4l-7 8-7-8h4z"/>
+                                            </svg>
+                                            pinned
+                                        </span>
+                                    @endif
+                                </div>
                                 @if ($post->categories->isNotEmpty())
                                     <x-post-categories :categories="$post->categories" />
                                 @endif

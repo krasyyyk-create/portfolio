@@ -32,7 +32,12 @@ class Post extends Model
         'content',
         'is_published',
         'published_at',
+        'is_pinned',
+        'pinned_at',
+        'pinned_until',
     ];
+
+    public const MAX_PIN_DAYS = 30;
 
     protected static function booted(): void
     {
@@ -49,6 +54,9 @@ class Post extends Model
         return [
             'is_published' => 'boolean',
             'published_at' => 'datetime',
+            'is_pinned' => 'boolean',
+            'pinned_at' => 'datetime',
+            'pinned_until' => 'datetime',
         ];
     }
 
@@ -67,12 +75,90 @@ class Post extends Model
         return $this->hasMany(Comment::class)->latest();
     }
 
+    public function visibleComments(): HasMany
+    {
+        return $this->hasMany(Comment::class)->visible()->latest();
+    }
+
+    public function reports(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Report::class, 'reportable');
+    }
+
+    public function topLevelComments(): HasMany
+    {
+        return $this->hasMany(Comment::class)->whereNull('parent_id')->latest();
+    }
+
+    public function loadCommentTree(): self
+    {
+        $this->load(['comments' => fn ($query) => $query->visible()->with('author')->latest()]);
+
+        $byParent = $this->comments->groupBy(fn (Comment $comment) => $comment->parent_id ?? 'root');
+
+        $this->comments->each(function (Comment $comment) use ($byParent): void {
+            $comment->setRelation(
+                'replies',
+                ($byParent->get($comment->id) ?? collect())->values()
+            );
+        });
+
+        $this->setRelation(
+            'topLevelComments',
+            ($byParent->get('root') ?? collect())->values()
+        );
+
+        return $this;
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query
             ->where('is_published', true)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now());
+    }
+
+    public function scopeOrderedForDisplay(Builder $query): Builder
+    {
+        $now = now();
+
+        return $query
+            ->orderByRaw(
+                'CASE WHEN is_pinned = 1 AND pinned_until > ? THEN 1 ELSE 0 END DESC',
+                [$now]
+            )
+            ->orderByRaw(
+                'CASE WHEN is_pinned = 1 AND pinned_until > ? THEN pinned_at ELSE published_at END DESC',
+                [$now]
+            );
+    }
+
+    public function isCurrentlyPinned(): bool
+    {
+        return $this->is_pinned
+            && $this->pinned_until !== null
+            && $this->pinned_until->isFuture();
+    }
+
+    public function pinForDays(int $days): void
+    {
+        $days = min(max($days, 1), self::MAX_PIN_DAYS);
+
+        $this->update([
+            'is_pinned' => true,
+            'pinned_at' => now(),
+            'pinned_until' => now()->addDays($days),
+        ]);
+    }
+
+    public function unpin(): void
+    {
+        $this->update([
+            'is_pinned' => false,
+            'pinned_at' => null,
+            'pinned_until' => null,
+        ]);
     }
 
     public function scopeSearch(Builder $query, ?string $term): Builder

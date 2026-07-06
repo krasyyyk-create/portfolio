@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Services\CommentImageProcessor;
 use Database\Factories\CommentFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,11 +21,23 @@ class Comment extends Model
     protected $fillable = [
         'post_id',
         'user_id',
+        'parent_id',
         'body',
+        'is_hidden',
         'image_path',
         'image_width',
         'image_height',
     ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_hidden' => 'boolean',
+        ];
+    }
 
     protected static function booted(): void
     {
@@ -40,6 +54,31 @@ class Comment extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Comment::class, 'parent_id');
+    }
+
+    public function replies(): HasMany
+    {
+        return $this->hasMany(Comment::class, 'parent_id')->latest();
+    }
+
+    public function isReply(): bool
+    {
+        return $this->parent_id !== null;
+    }
+
+    public function scopeVisible(Builder $query): Builder
+    {
+        return $query->where('is_hidden', false);
+    }
+
+    public function reports(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Report::class, 'reportable');
     }
 
     /**
