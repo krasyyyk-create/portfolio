@@ -115,7 +115,17 @@
                             </div>
 
                             <div class="flex items-center justify-between pt-4 border-t border-white/10">
-                                <span class="font-mono text-[10px] text-white/40">by {{ $post->author->name }}</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="font-mono text-[10px] text-white/40">by {{ $post->author->name }}</span>
+                                    @if ($post->comments_count > 0)
+                                        <span class="font-mono text-[10px] text-white/30 flex items-center gap-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                            </svg>
+                                            {{ $post->comments_count }}
+                                        </span>
+                                    @endif
+                                </div>
                                 <a
                                     href="{{ route('posts.show', $post) }}"
                                     class="font-mono text-xs text-indigo-300 hover:text-white flex items-center gap-1 transition-colors"

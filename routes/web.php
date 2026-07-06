@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfileController;
@@ -26,6 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/posts/{post:slug}/edit', [PostsController::class, 'edit'])->name('posts.edit');
     Route::put('/posts/{post:slug}', [PostsController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post:slug}', [PostsController::class, 'destroy'])->name('posts.destroy');
+    Route::post('/posts/{post:slug}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
+    Route::delete('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'destroy'])->name('posts.comments.destroy');
 });
 
 Route::get('/posts/{post:slug}', [PostsController::class, 'show'])->name('posts.show');

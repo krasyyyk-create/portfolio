@@ -59,5 +59,7 @@
                 </div>
             </div>
         @endif
+
+        <x-posts.comments :post="$post" />
     </article>
 </x-layouts.app>

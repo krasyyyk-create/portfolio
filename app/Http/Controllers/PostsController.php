@@ -20,6 +20,7 @@ class PostsController extends Controller
 
         $posts = Post::published()
             ->with(['author', 'categories'])
+            ->withCount('comments')
             ->when($activeCategory, fn ($query) => $query->whereHas(
                 'categories',
                 fn ($categoryQuery) => $categoryQuery->where('categories.id', $activeCategory->id)
@@ -40,7 +41,11 @@ class PostsController extends Controller
         abort_unless($post->is_published && $post->published_at?->isPast(), 404);
 
         return view('posts.show', [
-            'post' => $post->load(['author', 'categories']),
+            'post' => $post->load([
+                'author',
+                'categories',
+                'comments' => fn ($query) => $query->with('author'),
+            ]),
         ]);
     }
 
