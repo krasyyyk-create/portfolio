@@ -74,6 +74,38 @@ test('post authors can delete comments on their posts', function () {
     $this->assertDatabaseMissing('comments', ['id' => $comment->id]);
 });
 
+test('admins can delete any comment', function () {
+    $admin = User::factory()->admin()->create();
+    $commenter = User::factory()->create();
+    $post = Post::factory()->create();
+    $comment = Comment::factory()->create([
+        'post_id' => $post->id,
+        'user_id' => $commenter->id,
+    ]);
+
+    $this->actingAs($admin)
+        ->delete(route('posts.comments.destroy', [$post, $comment]))
+        ->assertRedirect(route('posts.show', $post).'#comments');
+
+    $this->assertDatabaseMissing('comments', ['id' => $comment->id]);
+});
+
+test('users cannot delete comments they do not own', function () {
+    $user = User::factory()->create();
+    $otherUser = User::factory()->create();
+    $post = Post::factory()->create(['user_id' => $otherUser->id]);
+    $comment = Comment::factory()->create([
+        'post_id' => $post->id,
+        'user_id' => $otherUser->id,
+    ]);
+
+    $this->actingAs($user)
+        ->delete(route('posts.comments.destroy', [$post, $comment]))
+        ->assertForbidden();
+
+    $this->assertDatabaseHas('comments', ['id' => $comment->id]);
+});
+
 test('published post page shows comments', function () {
     $post = Post::factory()->create();
     Comment::factory()->create([

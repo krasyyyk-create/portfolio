@@ -60,21 +60,12 @@
 
     <x-admin.post-image-upload :post="$post" />
 
-    <div class="space-y-2">
-        <label class="font-sans font-medium text-xs text-white/60" for="content">
-            CONTENT <span class="text-white/30">(optional with a featured image)</span>
-        </label>
-        <textarea
-            class="w-full bg-slate-950/20 border border-white/10 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-indigo-400 focus:bg-slate-950/30 transition-all font-sans resize-y min-h-[280px] @error('content') border-red-500/60 @enderror"
-            id="content"
-            name="content"
-            rows="14"
-        >{{ old('content', $post?->content) }}</textarea>
-        <p class="font-mono text-[10px] text-white/30">HTML is supported (e.g. &lt;p&gt;, &lt;strong&gt;, &lt;code&gt;). Leave blank for image-only posts.</p>
-        @error('content')
-            <p class="text-red-400 font-mono text-[11px]">&gt; {{ $message }}</p>
-        @enderror
-    </div>
+    <x-wysiwyg-editor
+        name="content"
+        :value="$post?->content ?? ''"
+        label='CONTENT <span class="text-white/30">(optional with a featured image)</span>'
+        hint="Use the toolbar to format text. Leave blank for image-only posts."
+    />
 
     <x-admin.post-category-picker
         :categories="$categories"
