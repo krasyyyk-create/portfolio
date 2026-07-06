@@ -55,7 +55,7 @@ test('comment authors can delete their comments', function () {
     ]);
 
     $this->actingAs($user)
-        ->delete(route('posts.comments.destroy', [$post, $comment]))
+        ->post(route('posts.comments.destroy', [$post, $comment]))
         ->assertRedirect(route('posts.show', $post).'#comments');
 
     $this->assertDatabaseMissing('comments', ['id' => $comment->id]);
@@ -71,7 +71,7 @@ test('post authors can delete comments on their posts', function () {
     ]);
 
     $this->actingAs($author)
-        ->delete(route('posts.comments.destroy', [$post, $comment]))
+        ->post(route('posts.comments.destroy', [$post, $comment]))
         ->assertRedirect(route('posts.show', $post).'#comments');
 
     $this->assertDatabaseMissing('comments', ['id' => $comment->id]);
@@ -87,7 +87,7 @@ test('admins can delete any comment', function () {
     ]);
 
     $this->actingAs($admin)
-        ->delete(route('posts.comments.destroy', [$post, $comment]))
+        ->post(route('posts.comments.destroy', [$post, $comment]))
         ->assertRedirect(route('posts.show', $post).'#comments');
 
     $this->assertDatabaseMissing('comments', ['id' => $comment->id]);
@@ -103,7 +103,7 @@ test('users cannot delete comments they do not own', function () {
     ]);
 
     $this->actingAs($user)
-        ->delete(route('posts.comments.destroy', [$post, $comment]))
+        ->post(route('posts.comments.destroy', [$post, $comment]))
         ->assertForbidden();
 
     $this->assertDatabaseHas('comments', ['id' => $comment->id]);
@@ -218,7 +218,7 @@ test('deleting a comment removes its stored image', function () {
     Storage::disk('public')->assertExists($path);
 
     $this->actingAs($user)
-        ->delete(route('posts.comments.destroy', [$post, $comment]))
+        ->post(route('posts.comments.destroy', [$post, $comment]))
         ->assertRedirect(route('posts.show', $post).'#comments');
 
     Storage::disk('public')->assertMissing($path);
@@ -317,7 +317,7 @@ test('deleting a parent comment removes its replies', function () {
     ]);
 
     $this->actingAs($user)
-        ->delete(route('posts.comments.destroy', [$post, $parent]))
+        ->post(route('posts.comments.destroy', [$post, $parent]))
         ->assertRedirect();
 
     $this->assertDatabaseMissing('comments', ['id' => $parent->id]);

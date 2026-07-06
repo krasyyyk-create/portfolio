@@ -41,7 +41,6 @@
                         onsubmit="return confirm('Delete this comment?')"
                     >
                         @csrf
-                        @method('DELETE')
                         <button
                             type="submit"
                             class="font-mono text-[10px] text-white/30 hover:text-red-400 transition-colors"

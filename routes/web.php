@@ -31,7 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/posts/{post:slug}', [PostsController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post:slug}', [PostsController::class, 'destroy'])->name('posts.destroy');
     Route::post('/posts/{post:slug}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
-    Route::delete('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'destroy'])->name('posts.comments.destroy');
+    Route::post('/posts/{post:slug}/comments/{comment}/delete', [CommentController::class, 'destroy'])->name('posts.comments.destroy');
     Route::post('/posts/{post:slug}/report', [ReportController::class, 'storePost'])->name('posts.report');
     Route::post('/posts/{post:slug}/comments/{comment}/report', [ReportController::class, 'storeComment'])->name('posts.comments.report');
     Route::post('/moderation-notifications/{notification}/read', [ModerationNotificationController::class, 'markRead'])->name('moderation-notifications.read');
