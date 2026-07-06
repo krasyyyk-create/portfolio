@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Database\Factories\PostFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,20 +16,21 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
-#[Fillable([
-    'user_id',
-    'title',
-    'slug',
-    'excerpt',
-    'image_path',
-    'content',
-    'is_published',
-    'published_at',
-])]
 class Post extends Model
 {
     /** @use HasFactory<PostFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'title',
+        'slug',
+        'excerpt',
+        'image_path',
+        'content',
+        'is_published',
+        'published_at',
+    ];
 
     protected static function booted(): void
     {
