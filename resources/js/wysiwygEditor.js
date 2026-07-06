@@ -1,4 +1,7 @@
 export default (initialContent = '') => ({
+    mode: 'visual',
+    htmlSource: initialContent || '',
+
     init() {
         if (initialContent) {
             this.$refs.editor.innerHTML = initialContent;
@@ -12,15 +15,40 @@ export default (initialContent = '') => ({
         }
     },
 
-    sync() {
-        const editor = this.$refs.editor;
-        let html = editor.innerHTML.trim();
+    normalizeHtml(html) {
+        const trimmed = html.trim();
 
-        if (html === '<br>' || html === '<div><br></div>' || html === '<p><br></p>') {
-            html = '';
+        if (trimmed === '<br>' || trimmed === '<div><br></div>' || trimmed === '<p><br></p>') {
+            return '';
+        }
+
+        return trimmed;
+    },
+
+    sync() {
+        const html = this.mode === 'html'
+            ? this.normalizeHtml(this.htmlSource)
+            : this.normalizeHtml(this.$refs.editor.innerHTML);
+
+        if (this.mode === 'visual') {
+            this.htmlSource = html;
         }
 
         this.$refs.textarea.value = html;
+    },
+
+    toggleMode() {
+        if (this.mode === 'visual') {
+            this.htmlSource = this.normalizeHtml(this.$refs.editor.innerHTML);
+            this.mode = 'html';
+            this.sync();
+            this.$nextTick(() => this.$refs.htmlEditor?.focus());
+        } else {
+            this.$refs.editor.innerHTML = this.htmlSource;
+            this.mode = 'visual';
+            this.sync();
+            this.$nextTick(() => this.$refs.editor?.focus());
+        }
     },
 
     exec(command, value = null) {

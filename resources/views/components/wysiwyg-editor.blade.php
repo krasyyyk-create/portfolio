@@ -25,6 +25,7 @@
         'border-red-500/60' => $hasError,
     ])>
         <div class="flex flex-wrap items-center gap-0.5 p-2 border-b border-white/10 bg-white/5">
+            <div class="flex flex-wrap items-center gap-0.5" x-show="mode === 'visual'">
             <button type="button" @mousedown.prevent @click="exec('bold')" class="wysiwyg-btn" title="Bold">
                 <span class="font-bold">B</span>
             </button>
@@ -55,15 +56,36 @@
 
             <button type="button" @mousedown.prevent @click="insertLink()" class="wysiwyg-btn font-mono text-[11px]" title="Link">link</button>
             <button type="button" @mousedown.prevent @click="exec('removeFormat')" class="wysiwyg-btn font-mono text-[11px]" title="Clear formatting">clear</button>
+            </div>
+
+            <button
+                type="button"
+                @click="toggleMode()"
+                class="wysiwyg-btn ml-auto font-mono text-[11px]"
+                :class="mode === 'html' && 'wysiwyg-btn-active'"
+                :title="mode === 'visual' ? 'Switch to HTML source' : 'Switch to visual editor'"
+                x-text="mode === 'visual' ? 'HTML' : 'Visual'"
+            ></button>
         </div>
 
         <div
+            x-show="mode === 'visual'"
             x-ref="editor"
             contenteditable="true"
             @input="sync()"
             class="wysiwyg-content min-h-[280px] max-h-[480px] overflow-y-auto px-4 py-3 font-sans text-sm text-white/90 leading-relaxed outline-none"
             data-placeholder="Start writing..."
         ></div>
+
+        <textarea
+            x-show="mode === 'html'"
+            x-ref="htmlEditor"
+            x-model="htmlSource"
+            @input="sync()"
+            spellcheck="false"
+            class="wysiwyg-html-source w-full min-h-[280px] max-h-[480px] overflow-y-auto px-4 py-3 font-mono text-xs text-white/90 leading-relaxed outline-none resize-y bg-transparent border-0"
+            placeholder="<p>Edit raw HTML here...</p>"
+        ></textarea>
 
         <textarea
             x-ref="textarea"
