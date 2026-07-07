@@ -6,13 +6,21 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ReportedContentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CircuitsController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DriverRankingsController;
+use App\Http\Controllers\DriversController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\ModerationNotificationController;
+use App\Http\Controllers\PitStopsController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RacesController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SeasonsController;
+use App\Http\Controllers\TeamRankingsController;
+use App\Http\Controllers\TeamsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('home'))->name('home');
@@ -41,20 +49,23 @@ Route::get('/posts/{post:slug}', [PostsController::class, 'show'])->name('posts.
 Route::get('/services', fn () => view('services'))->name('services');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
-Route::get('/teams', [App\Http\Controllers\TeamsController::class, 'index'])->name('teams.index');
-Route::get('/drivers', [App\Http\Controllers\DriversController::class, 'index'])->name('drivers.index');
+Route::get('/teams', [TeamsController::class, 'index'])->name('teams.index');
+Route::get('/drivers', [DriversController::class, 'index'])->name('drivers.index');
 Route::get('/races', [RacesController::class, 'index'])->name('races.index');
-Route::get('/circuits', [App\Http\Controllers\CircuitsController::class, 'index'])->name('circuits.index');
-Route::get('/seasons', [App\Http\Controllers\SeasonsController::class, 'index'])->name('seasons.index');
-Route::get('/TeamRankings', [App\Http\Controllers\TeamRankingsController::class, 'index'])->name('teamRankings.index');
-Route::get('/DriverRankings', [App\Http\Controllers\DriverRankingsController::class, 'index'])->name('driverRankings.index');
-Route::get('/PitStops', [App\Http\Controllers\PitStopsController::class, 'index'])->name('pitStops.index');
+Route::get('/circuits', [CircuitsController::class, 'index'])->name('circuits.index');
+Route::get('/seasons', [SeasonsController::class, 'index'])->name('seasons.index');
+Route::get('/TeamRankings', [TeamRankingsController::class, 'index'])->name('teamRankings.index');
+Route::get('/DriverRankings', [DriverRankingsController::class, 'index'])->name('driverRankings.index');
+Route::get('/PitStops', [PitStopsController::class, 'index'])->name('pitStops.index');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'create'])->name('login');
     Route::post('/login', [AuthController::class, 'store']);
     Route::get('/register', [AuthController::class, 'registerCreate'])->name('register');
     Route::post('/register', [AuthController::class, 'registerStore']);
+
+    Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 });
 
 Route::post('/logout', [AuthController::class, 'destroy'])

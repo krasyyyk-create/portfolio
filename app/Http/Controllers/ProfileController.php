@@ -56,7 +56,7 @@ class ProfileController extends Controller
 
         $validated = $request->validate([
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'current_password' => ['required', 'current_password'],
+            'current_password' => $user->hasPassword() ? ['required', 'current_password'] : ['nullable'],
             'password' => ['nullable', 'confirmed', Password::defaults()],
         ]);
 

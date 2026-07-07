@@ -74,6 +74,17 @@
                         </div>
                     @endif
 
+                    <x-auth.google-button />
+
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                            <div class="w-full border-t border-white/10"></div>
+                        </div>
+                        <div class="relative flex justify-center">
+                            <span class="bg-transparent px-3 font-mono text-[11px] text-white/40">OR_EMAIL_AUTH</span>
+                        </div>
+                    </div>
+
                     <form action="{{ route('login') }}" method="POST" class="space-y-6">
                         @csrf
 

@@ -22,8 +22,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'google_id',
         'role',
         'avatar_path',
+        'email_verified_at',
     ];
 
     protected $hidden = [
@@ -53,6 +55,16 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->hasRole(UserRole::Admin);
+    }
+
+    public function usesGoogleAuth(): bool
+    {
+        return $this->google_id !== null && $this->password === null;
+    }
+
+    public function hasPassword(): bool
+    {
+        return $this->password !== null;
     }
 
     public function posts(): HasMany

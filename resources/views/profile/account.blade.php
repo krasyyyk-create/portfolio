@@ -12,7 +12,11 @@
                 Account <span class="text-indigo-400">Info</span>
             </h1>
             <p class="font-sans text-sm text-white/60">
-                Manage your email, password, and session. Changes here require your current password.
+                @if ($user->usesGoogleAuth())
+                    You signed in with Google. Update your email here or set a password to also sign in with email.
+                @else
+                    Manage your email, password, and session. Changes here require your current password.
+                @endif
             </p>
         </header>
 
@@ -90,27 +94,29 @@
                     </div>
                 </div>
 
-                <div class="space-y-4 pt-4 border-t border-white/10">
-                    <h2 class="font-mono text-sm font-bold text-white flex items-center gap-2">
-                        <span class="text-indigo-400">&gt;</span> VERIFY CHANGES
-                    </h2>
-                    <p class="font-sans text-xs text-white/40">Enter your current password to save account changes.</p>
+                @if ($user->hasPassword())
+                    <div class="space-y-4 pt-4 border-t border-white/10">
+                        <h2 class="font-mono text-sm font-bold text-white flex items-center gap-2">
+                            <span class="text-indigo-400">&gt;</span> VERIFY CHANGES
+                        </h2>
+                        <p class="font-sans text-xs text-white/40">Enter your current password to save account changes.</p>
 
-                    <div class="space-y-2">
-                        <label class="font-sans font-medium text-xs text-white/60" for="current_password">CURRENT PASSWORD</label>
-                        <input
-                            class="w-full bg-slate-950/20 border border-white/10 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-indigo-400 focus:bg-slate-950/30 transition-all font-sans placeholder:text-white/30 @error('current_password') border-red-500/60 @enderror"
-                            id="current_password"
-                            name="current_password"
-                            type="password"
-                            autocomplete="current-password"
-                            required
-                        />
-                        @error('current_password')
-                            <p class="text-red-400 font-mono text-[11px]">&gt; {{ $message }}</p>
-                        @enderror
+                        <div class="space-y-2">
+                            <label class="font-sans font-medium text-xs text-white/60" for="current_password">CURRENT PASSWORD</label>
+                            <input
+                                class="w-full bg-slate-950/20 border border-white/10 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-indigo-400 focus:bg-slate-950/30 transition-all font-sans placeholder:text-white/30 @error('current_password') border-red-500/60 @enderror"
+                                id="current_password"
+                                name="current_password"
+                                type="password"
+                                autocomplete="current-password"
+                                required
+                            />
+                            @error('current_password')
+                                <p class="text-red-400 font-mono text-[11px]">&gt; {{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <button
                     class="w-full bg-indigo-500/85 hover:bg-indigo-500 border border-white/10 text-white font-sans font-semibold py-4 rounded-lg active:scale-[0.98] transition-all cursor-pointer shadow-lg shadow-indigo-500/25"
