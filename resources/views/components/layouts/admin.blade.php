@@ -58,10 +58,7 @@
                             class="absolute right-0 top-full mt-2 w-44 py-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-lg shadow-xl shadow-black/20 z-50"
                         >
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 font-mono text-xs text-white/70 hover:text-white hover:bg-white/5 transition-colors">
-                                &gt; profile
-                            </a>
-                            <a href="{{ route('account.edit') }}" class="block px-4 py-2 font-mono text-xs text-white/70 hover:text-white hover:bg-white/5 transition-colors">
-                                &gt; account info
+                                &gt; edit profile
                             </a>
                         </div>
                     </div>

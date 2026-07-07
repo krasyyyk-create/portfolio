@@ -81,24 +81,24 @@
                             class="absolute right-0 top-full mt-2 w-48 py-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-lg shadow-xl shadow-black/20 z-50"
                         >
                             <a
+                                href="{{ route('users.show', auth()->user()) }}"
+                                @class([
+                                    'block px-4 py-2.5 font-mono text-sm transition-colors',
+                                    'text-white bg-white/10' => request()->routeIs('users.show') && request()->route('user')?->is(auth()->user()),
+                                    'text-white/70 hover:text-white hover:bg-white/5' => ! request()->routeIs('users.show') || ! request()->route('user')?->is(auth()->user()),
+                                ])
+                            >
+                                &gt; view profile
+                            </a>
+                            <a
                                 href="{{ route('profile.edit') }}"
                                 @class([
                                     'block px-4 py-2.5 font-mono text-sm transition-colors',
-                                    'text-white bg-white/10' => request()->routeIs('profile.*'),
-                                    'text-white/70 hover:text-white hover:bg-white/5' => ! request()->routeIs('profile.*'),
+                                    'text-white bg-white/10' => request()->routeIs('profile.*') || request()->routeIs('account.*'),
+                                    'text-white/70 hover:text-white hover:bg-white/5' => ! request()->routeIs('profile.*') && ! request()->routeIs('account.*'),
                                 ])
                             >
-                                &gt; profile
-                            </a>
-                            <a
-                                href="{{ route('account.edit') }}"
-                                @class([
-                                    'block px-4 py-2.5 font-mono text-sm transition-colors',
-                                    'text-white bg-white/10' => request()->routeIs('account.*'),
-                                    'text-white/70 hover:text-white hover:bg-white/5' => ! request()->routeIs('account.*'),
-                                ])
-                            >
-                                &gt; account info
+                                &gt; edit profile
                             </a>
                         </div>
                     </div>

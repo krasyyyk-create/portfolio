@@ -10,54 +10,58 @@
     x-data="{ showReply: {{ old('parent_id') == $comment->id ? 'true' : 'false' }}, previewUrl: null }"
 >
     <div class="flex items-start gap-4 {{ $comment->isReply() ? 'pt-4' : '' }}">
-        <div class="shrink-0">
+        <a href="{{ route('users.show', $comment->author) }}" class="shrink-0 group/avatar">
             @if ($comment->author->avatar_url)
                 <img
                     src="{{ $comment->author->avatar_url }}"
                     alt="{{ $comment->author->name }}"
-                    class="w-10 h-10 rounded-full object-cover border border-white/10"
+                    class="w-10 h-10 rounded-full object-cover border border-white/10 group-hover/avatar:border-indigo-400/40 transition-colors"
                 />
             @else
-                <div class="w-10 h-10 rounded-full bg-indigo-500/30 border border-indigo-400/30 flex items-center justify-center font-sans text-sm font-bold text-indigo-300">
+                <div class="w-10 h-10 rounded-full bg-indigo-500/30 border border-indigo-400/30 group-hover/avatar:border-indigo-400/50 flex items-center justify-center font-sans text-sm font-bold text-indigo-300 transition-colors">
                     {{ strtoupper(substr($comment->author->name, 0, 1)) }}
                 </div>
             @endif
-        </div>
+        </a>
 
         <div class="flex-grow min-w-0 space-y-2">
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <span class="font-sans text-sm font-semibold text-white">{{ $comment->author->name }}</span>
+                    <a href="{{ route('users.show', $comment->author) }}" class="font-sans text-sm font-semibold text-white hover:text-indigo-300 transition-colors">
+                        {{ $comment->author->name }}
+                    </a>
                     <time class="font-mono text-[10px] text-white/40" datetime="{{ $comment->created_at->toIso8601String() }}">
                         {{ $comment->created_at->diffForHumans() }}
                     </time>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3">
-                @can('delete', $comment)
-                    <form
-                        action="{{ route('posts.comments.destroy', [$post, $comment]) }}"
-                        method="POST"
-                        onsubmit="return confirm('Delete this comment?')"
-                    >
-                        @csrf
-                        <button
-                            type="submit"
-                            class="font-mono text-[10px] text-white/30 hover:text-red-400 transition-colors"
+                    @can('delete', $comment)
+                        <form
+                            action="{{ route('posts.comments.destroy', [$post, $comment]) }}"
+                            method="POST"
+                            onsubmit="return confirm('Delete this comment?')"
                         >
-                            delete
-                        </button>
-                    </form>
-                @else
+                            @csrf
+                            <button
+                                type="submit"
+                                class="font-mono text-[10px] text-white/30 hover:text-red-400 transition-colors"
+                            >
+                                delete
+                            </button>
+                        </form>
+                    @endcan
+
                     @auth
                         @if (auth()->id() !== $comment->user_id)
                             <x-report-button
                                 :action="route('posts.comments.report', [$post, $comment])"
                                 label="Report this comment"
+                                heading="Report comment"
+                                description="Tell us why this comment should be reviewed. Reports are visible to admins only."
                             />
                         @endif
                     @endauth
-                @endcan
                 </div>
             </div>
 

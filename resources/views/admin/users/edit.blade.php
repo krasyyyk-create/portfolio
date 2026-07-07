@@ -8,6 +8,59 @@
             <p class="font-sans text-sm text-white/50 mt-1">{{ $user->email }}</p>
         </div>
 
+        <div class="glass-card-heavy border border-white/15 rounded-xl p-6 md:p-8 space-y-6">
+            <div class="space-y-4">
+                <h2 class="font-mono text-sm font-bold text-white flex items-center gap-2">
+                    <span class="text-indigo-400">&gt;</span> ADMIN ACCESS
+                </h2>
+
+                <div class="flex flex-wrap items-center justify-between gap-4 p-4 bg-slate-950/20 border border-white/10 rounded-lg">
+                    <div class="space-y-1">
+                        <p class="font-sans text-sm text-white/60">Current role</p>
+                        <span @class([
+                            'inline-flex font-mono text-[11px] px-2 py-0.5 rounded-full border',
+                            'bg-indigo-500/20 text-indigo-300 border-indigo-400/30' => $user->isAdmin(),
+                            'bg-white/5 text-white/50 border-white/10' => ! $user->isAdmin(),
+                        ])>
+                            {{ $user->role->label() }}
+                        </span>
+                    </div>
+
+                    @if ($user->id === auth()->id())
+                        <p class="font-mono text-xs text-white/40">You cannot remove your own admin role.</p>
+                    @elseif ($user->isAdmin())
+                        <form action="{{ route('admin.users.update-role', $user) }}" method="POST" onsubmit="return confirm('Remove admin access from {{ $user->name }}?')">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="role" value="user" />
+                            <button
+                                type="submit"
+                                class="font-mono text-xs text-amber-400 hover:text-amber-300 border border-amber-400/30 hover:border-amber-400/50 bg-amber-500/10 hover:bg-amber-500/20 px-4 py-2 rounded-lg transition-all cursor-pointer"
+                            >
+                                revoke admin
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ route('admin.users.update-role', $user) }}" method="POST" onsubmit="return confirm('Grant admin access to {{ $user->name }}?')">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="role" value="admin" />
+                            <button
+                                type="submit"
+                                class="font-mono text-xs text-emerald-400 hover:text-emerald-300 border border-emerald-400/30 hover:border-emerald-400/50 bg-emerald-500/10 hover:bg-emerald-500/20 px-4 py-2 rounded-lg transition-all cursor-pointer"
+                            >
+                                make admin
+                            </button>
+                        </form>
+                    @endif
+                </div>
+
+                @error('role')
+                    <p class="text-red-400 font-mono text-[11px]">&gt; {{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
         <div class="glass-card-heavy border border-white/15 rounded-xl p-6 md:p-8">
             <form action="{{ route('admin.users.update', $user) }}" method="POST" class="space-y-6">
                 @csrf
@@ -38,25 +91,6 @@
                         required
                     />
                     @error('email')
-                        <p class="text-red-400 font-mono text-[11px]">&gt; {{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="space-y-2">
-                    <label class="font-sans font-medium text-xs text-white/60" for="role">ROLE</label>
-                    <select
-                        class="w-full bg-slate-950/20 border border-white/10 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-indigo-400 focus:bg-slate-950/30 transition-all font-mono text-sm @error('role') border-red-500/60 @enderror"
-                        id="role"
-                        name="role"
-                        required
-                    >
-                        @foreach ($roles as $role)
-                            <option value="{{ $role->value }}" @selected(old('role', $user->role->value) === $role->value)>
-                                {{ $role->label() }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('role')
                         <p class="text-red-400 font-mono text-[11px]">&gt; {{ $message }}</p>
                     @enderror
                 </div>

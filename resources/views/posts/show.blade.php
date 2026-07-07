@@ -24,18 +24,28 @@
                     @if ($post->categories->isNotEmpty())
                         <x-post-categories :categories="$post->categories" />
                     @endif
-                    <p class="font-mono text-sm text-white/50">by {{ $post->author->name }}</p>
+                    <p class="font-mono text-sm text-white/50">
+                        by <a href="{{ route('users.show', $post->author) }}" class="hover:text-indigo-300 transition-colors">{{ $post->author->name }}</a>
+                    </p>
                 </div>
 
-                @auth
-                    @if (auth()->id() !== $post->user_id)
-                        <x-report-button
-                            :action="route('posts.report', $post)"
-                            label="Report this post"
-                            size="md"
-                        />
-                    @endif
-                @endauth
+                <div class="flex items-center gap-2 shrink-0">
+                    <x-like-button
+                        :action="route('posts.like.toggle', $post)"
+                        :liked="$isLiked"
+                        size="md"
+                        :show-count="false"
+                    />
+                    @auth
+                        @if (auth()->id() !== $post->user_id)
+                            <x-report-button
+                                :action="route('posts.report', $post)"
+                                label="Report this post"
+                                size="md"
+                            />
+                        @endif
+                    @endauth
+                </div>
             </div>
         </div>
 

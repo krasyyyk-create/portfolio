@@ -6,6 +6,7 @@ use App\Enums\ReportStatus;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Report;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -31,7 +32,12 @@ class ReportController extends Controller
         return $this->store($request, $comment, route('posts.show', $post).'#'.$fragment);
     }
 
-    private function store(Request $request, Post|Comment $reportable, string $redirectTo): RedirectResponse
+    public function storeProfile(Request $request, User $user): RedirectResponse
+    {
+        return $this->store($request, $user, route('users.show', $user));
+    }
+
+    private function store(Request $request, Post|Comment|User $reportable, string $redirectTo): RedirectResponse
     {
         $user = $request->user();
 
@@ -44,6 +50,12 @@ class ReportController extends Controller
         if ($reportable instanceof Comment && $reportable->user_id === $user->id) {
             throw ValidationException::withMessages([
                 'reason' => 'You cannot report your own comment.',
+            ]);
+        }
+
+        if ($reportable instanceof User && $reportable->is($user)) {
+            throw ValidationException::withMessages([
+                'reason' => 'You cannot report your own profile.',
             ]);
         }
 

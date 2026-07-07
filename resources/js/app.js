@@ -1,11 +1,13 @@
 import Alpine from 'alpinejs';
 import avatarCropper from './avatarCropper';
+import bannerCropper from './bannerCropper';
 import wysiwygEditor from './wysiwygEditor';
 import 'cropperjs/dist/cropper.css';
 
 window.Alpine = Alpine;
 
 Alpine.data('avatarCropper', avatarCropper);
+Alpine.data('bannerCropper', bannerCropper);
 Alpine.data('wysiwygEditor', wysiwygEditor);
 
 Alpine.data('terminalOverlay', () => ({

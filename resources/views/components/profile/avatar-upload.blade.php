@@ -1,6 +1,6 @@
 @props(['user'])
 
-<div x-data="avatarCropper()" class="space-y-4">
+<div x-data="avatarCropper" class="space-y-4">
     <input type="file" name="avatar" x-ref="avatarInput" class="hidden" />
 
     <div class="flex items-start gap-6">

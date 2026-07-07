@@ -85,6 +85,16 @@ class Post extends Model
         return $this->morphMany(Report::class, 'reportable');
     }
 
+    public function likes(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'post_likes')->withTimestamps();
+    }
+
+    public function isLikedBy(?User $user): bool
+    {
+        return $user !== null && $this->likes()->where('user_id', $user->id)->exists();
+    }
+
     public function topLevelComments(): HasMany
     {
         return $this->hasMany(Comment::class)->whereNull('parent_id')->latest();
@@ -124,10 +134,12 @@ class Post extends Model
         $now = now();
 
         return $query
+            ->withCount('likes')
             ->orderByRaw(
                 'CASE WHEN is_pinned = 1 AND pinned_until > ? THEN 1 ELSE 0 END DESC',
                 [$now]
             )
+            ->orderByDesc('likes_count')
             ->orderByRaw(
                 'CASE WHEN is_pinned = 1 AND pinned_until > ? THEN pinned_at ELSE published_at END DESC',
                 [$now]

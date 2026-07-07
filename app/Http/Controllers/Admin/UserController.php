@@ -24,7 +24,6 @@ class UserController extends Controller
     {
         return view('admin.users.edit', [
             'user' => $user,
-            'roles' => UserRole::cases(),
         ]);
     }
 
@@ -33,22 +32,12 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'role' => ['required', Rule::enum(UserRole::class)],
             'password' => ['nullable', 'confirmed', Password::defaults()],
         ]);
-
-        $role = $validated['role'] instanceof UserRole
-            ? $validated['role']
-            : UserRole::from($validated['role']);
-
-        if ($user->id === auth()->id() && $role !== UserRole::Admin) {
-            return back()->withErrors(['role' => 'You cannot remove your own admin role.']);
-        }
 
         $user->fill([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'role' => $role,
         ]);
 
         if (! empty($validated['password'])) {
@@ -60,6 +49,39 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.index')
             ->with('success', "User {$user->name} updated successfully.");
+    }
+
+    public function updateRole(Request $request, User $user): RedirectResponse
+    {
+        $validated = $request->validate([
+            'role' => ['required', Rule::enum(UserRole::class)],
+        ]);
+
+        $role = $validated['role'] instanceof UserRole
+            ? $validated['role']
+            : UserRole::from($validated['role']);
+
+        if ($redirect = $this->guardAgainstSelfDemotion($user, $role)) {
+            return $redirect;
+        }
+
+        $user->update(['role' => $role]);
+
+        $message = match ($role) {
+            UserRole::Admin => "{$user->name} is now an admin.",
+            UserRole::User => "Admin access removed from {$user->name}.",
+        };
+
+        return back()->with('success', $message);
+    }
+
+    private function guardAgainstSelfDemotion(User $user, UserRole $role): ?RedirectResponse
+    {
+        if ($user->id === auth()->id() && $role !== UserRole::Admin) {
+            return back()->withErrors(['role' => 'You cannot remove your own admin role.']);
+        }
+
+        return null;
     }
 
     public function destroy(User $user): RedirectResponse

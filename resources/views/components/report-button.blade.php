@@ -1,10 +1,14 @@
 @props([
     'action',
     'label' => 'Report content',
+    'heading' => null,
+    'description' => null,
     'size' => 'sm',
 ])
 
 @php
+    $dialogHeading = $heading ?? $label;
+    $dialogDescription = $description ?? 'Tell us why this content should be reviewed. Reports are visible to admins only.';
     $buttonSize = $size === 'md'
         ? 'w-16 h-16 rounded-2xl'
         : 'w-12 h-12 rounded-xl';
@@ -70,10 +74,10 @@
                             <path d="M6 3v18"/>
                             <path d="M6 5.5c2.8-.8 4.6.6 7.2.2 1.8-.3 3.4-1 5.8-.7v7.5c-2.4-.3-4 .4-5.8.7-2.6.4-4.4-1-7.2-.2"/>
                         </svg>
-                        Report content
+                        {{ $dialogHeading }}
                     </h3>
                     <p class="font-sans text-sm text-white/60">
-                        Tell us why this content should be reviewed. Reports are visible to admins only.
+                        {{ $dialogDescription }}
                     </p>
                 </div>
 

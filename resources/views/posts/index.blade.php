@@ -133,15 +133,15 @@
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach ($posts as $post)
-                    <article class="glass-card hover:bg-white/15 hover:border-indigo-400/30 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 group hover:-translate-y-1 shadow-xl">
+                    <article class="glass-card hover:bg-white/15 hover:border-indigo-400/30 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 group hover:-translate-y-1 shadow-xl relative cursor-pointer">
                         @if ($post->image_url)
-                            <a href="{{ route('posts.show', $post) }}" class="block aspect-[16/9] overflow-hidden">
+                            <div class="aspect-[16/9] overflow-hidden">
                                 <img
                                     src="{{ $post->image_url }}"
                                     alt="{{ $post->title }}"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                 />
-                            </a>
+                            </div>
                         @endif
                         <div class="bg-white/5 p-3.5 flex justify-between items-center border-b border-white/10 select-none">
                             <div class="flex gap-1.5">
@@ -172,7 +172,7 @@
                                     <x-post-categories :categories="$post->categories" />
                                 @endif
                                 <h2 class="font-sans text-lg font-bold text-white group-hover:text-indigo-400 transition-colors">
-                                    <a href="{{ route('posts.show', $post) }}">{{ $post->title }}</a>
+                                    {{ $post->title }}
                                 </h2>
                                 @if ($post->excerpt)
                                     <p class="font-sans text-sm text-white/70 leading-relaxed line-clamp-3">{{ $post->excerpt }}</p>
@@ -181,7 +181,13 @@
 
                             <div class="flex items-center justify-between pt-4 border-t border-white/10">
                                 <div class="flex items-center gap-3">
-                                    <span class="font-mono text-[10px] text-white/40">by {{ $post->author->name }}</span>
+                                    <a href="{{ route('users.show', $post->author) }}" class="relative z-10 font-mono text-[10px] text-white/40 hover:text-indigo-300 transition-colors">by {{ $post->author->name }}</a>
+                                    <span class="font-mono text-xs text-rose-300/80 flex items-center gap-1.5">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                        </svg>
+                                        {{ $post->likes_count }}
+                                    </span>
                                     @if ($post->comments_count > 0)
                                         <span class="font-mono text-[10px] text-white/30 flex items-center gap-1">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,17 +197,21 @@
                                         </span>
                                     @endif
                                 </div>
-                                <a
-                                    href="{{ route('posts.show', $post) }}"
-                                    class="font-mono text-xs text-indigo-300 hover:text-white flex items-center gap-1 transition-colors"
-                                >
+                                <span class="font-mono text-xs text-indigo-300 group-hover:text-white flex items-center gap-1 transition-colors pointer-events-none">
                                     <span>&gt; read</span>
                                     <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
-                                </a>
+                                </span>
                             </div>
                         </div>
+                        <a
+                            href="{{ route('posts.show', $post) }}"
+                            class="absolute inset-0 z-[1] rounded-2xl"
+                            aria-label="Read {{ $post->title }}"
+                        >
+                            <span class="sr-only">Read {{ $post->title }}</span>
+                        </a>
                     </article>
                 @endforeach
             </div>

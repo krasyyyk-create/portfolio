@@ -14,6 +14,7 @@ use App\Http\Controllers\DriversController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\ModerationNotificationController;
 use App\Http\Controllers\PitStopsController;
+use App\Http\Controllers\PostLikeController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RacesController;
@@ -26,11 +27,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', fn () => view('home'))->name('home');
 Route::get('/projects', fn () => view('projects'))->name('projects');
 Route::get('/posts', [PostsController::class, 'index'])->name('posts.index');
+Route::get('/users/{user}', [ProfileController::class, 'show'])->name('users.show');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::get('/account', [ProfileController::class, 'accountEdit'])->name('account.edit');
+    Route::get('/account', fn () => redirect()->route('profile.edit'))->name('account.edit');
     Route::put('/account', [ProfileController::class, 'accountUpdate'])->name('account.update');
     Route::get('/my-posts', [PostsController::class, 'mine'])->name('posts.mine');
     Route::get('/posts/create', [PostsController::class, 'create'])->name('posts.create');
@@ -40,8 +42,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/posts/{post:slug}', [PostsController::class, 'destroy'])->name('posts.destroy');
     Route::post('/posts/{post:slug}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
     Route::post('/posts/{post:slug}/comments/{comment}/delete', [CommentController::class, 'destroy'])->name('posts.comments.destroy');
+    Route::post('/posts/{post:slug}/like', [PostLikeController::class, 'toggle'])->name('posts.like.toggle');
     Route::post('/posts/{post:slug}/report', [ReportController::class, 'storePost'])->name('posts.report');
     Route::post('/posts/{post:slug}/comments/{comment}/report', [ReportController::class, 'storeComment'])->name('posts.comments.report');
+    Route::post('/users/{user}/report', [ReportController::class, 'storeProfile'])->name('users.report');
     Route::post('/moderation-notifications/{notification}/read', [ModerationNotificationController::class, 'markRead'])->name('moderation-notifications.read');
 });
 
@@ -80,6 +84,7 @@ Route::prefix('admin')
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.update-role');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         Route::resource('posts', PostController::class)->except(['show']);
         Route::post('/posts/{post}/toggle-pin', [PostController::class, 'togglePin'])->name('posts.toggle-pin');

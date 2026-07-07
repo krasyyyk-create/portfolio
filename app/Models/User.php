@@ -7,7 +7,9 @@ use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Notifications\Notifiable;
@@ -25,6 +27,8 @@ class User extends Authenticatable
         'google_id',
         'role',
         'avatar_path',
+        'bio',
+        'banner_path',
         'email_verified_at',
     ];
 
@@ -82,6 +86,16 @@ class User extends Authenticatable
         return $this->hasMany(Report::class);
     }
 
+    public function receivedReports(): MorphMany
+    {
+        return $this->morphMany(Report::class, 'reportable');
+    }
+
+    public function likedPosts(): BelongsToMany
+    {
+        return $this->belongsToMany(Post::class, 'post_likes')->withTimestamps();
+    }
+
     public function moderationNotifications(): HasMany
     {
         return $this->hasMany(ModerationNotification::class);
@@ -109,6 +123,31 @@ class User extends Authenticatable
     {
         if ($this->avatar_path) {
             Storage::disk('public')->delete($this->avatar_path);
+        }
+    }
+
+    /**
+     * @return Attribute<?string, never>
+     */
+    protected function bannerUrl(): Attribute
+    {
+        return Attribute::get(
+            fn (): ?string => $this->banner_path
+                ? Storage::disk('public')->url($this->banner_path)
+                : null
+        );
+    }
+
+    public function storeUploadedBanner(UploadedFile $file): void
+    {
+        $this->deleteStoredBanner();
+        $this->banner_path = $file->store('banners', 'public');
+    }
+
+    public function deleteStoredBanner(): void
+    {
+        if ($this->banner_path) {
+            Storage::disk('public')->delete($this->banner_path);
         }
     }
 }

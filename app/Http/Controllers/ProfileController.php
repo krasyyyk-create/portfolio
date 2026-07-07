@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -10,6 +11,23 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    public function show(User $user): View
+    {
+        $recentLikes = $user->likedPosts()
+            ->published()
+            ->with(['author', 'categories'])
+            ->withCount(['comments', 'likes'])
+            ->orderByPivot('created_at', 'desc')
+            ->limit(12)
+            ->get();
+
+        return view('profile.show', [
+            'user' => $user,
+            'recentLikes' => $recentLikes,
+            'isOwner' => auth()->id() === $user->id,
+        ]);
+    }
+
     public function edit(): View
     {
         return view('profile.edit', [
@@ -23,11 +41,15 @@ class ProfileController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'bio' => ['nullable', 'string', 'max:500'],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp,gif', 'max:2048'],
             'remove_avatar' => ['sometimes', 'boolean'],
+            'banner' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp,gif', 'max:4096'],
+            'remove_banner' => ['sometimes', 'boolean'],
         ]);
 
         $user->name = $validated['name'];
+        $user->bio = $validated['bio'] ?? null;
 
         if ($request->boolean('remove_avatar')) {
             $user->deleteStoredAvatar();
@@ -36,18 +58,18 @@ class ProfileController extends Controller
             $user->storeUploadedAvatar($request->file('avatar'));
         }
 
+        if ($request->boolean('remove_banner')) {
+            $user->deleteStoredBanner();
+            $user->banner_path = null;
+        } elseif ($request->hasFile('banner')) {
+            $user->storeUploadedBanner($request->file('banner'));
+        }
+
         $user->save();
 
         return redirect()
             ->route('profile.edit')
             ->with('success', 'Profile updated successfully.');
-    }
-
-    public function accountEdit(): View
-    {
-        return view('profile.account', [
-            'user' => auth()->user(),
-        ]);
     }
 
     public function accountUpdate(Request $request): RedirectResponse
@@ -69,7 +91,7 @@ class ProfileController extends Controller
         $user->save();
 
         return redirect()
-            ->route('account.edit')
+            ->route('profile.edit')
             ->with('success', 'Account info updated successfully.');
     }
 }

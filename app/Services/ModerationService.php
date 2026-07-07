@@ -22,7 +22,7 @@ class ModerationService
 
         $reportable = $report->reportable;
 
-        if (! $reportable instanceof Post && ! $reportable instanceof Comment) {
+        if (! $reportable instanceof Post && ! $reportable instanceof Comment && ! $reportable instanceof User) {
             throw new InvalidArgumentException('Reported content is no longer available.');
         }
 
@@ -36,13 +36,24 @@ class ModerationService
                 ]);
                 $contentType = 'post';
                 $contentLabel = $reportable->title;
-            } else {
+                $author = $reportable->author;
+            } elseif ($reportable instanceof Comment) {
                 $reportable->update(['is_hidden' => true]);
                 $contentType = 'comment';
                 $contentLabel = $report->contentSummary();
+                $author = $reportable->author;
+            } else {
+                $reportable->deleteStoredAvatar();
+                $reportable->deleteStoredBanner();
+                $reportable->update([
+                    'bio' => null,
+                    'avatar_path' => null,
+                    'banner_path' => null,
+                ]);
+                $contentType = 'profile';
+                $contentLabel = $reportable->name;
+                $author = $reportable;
             }
-
-            $author = $reportable->author;
 
             $this->resolvePendingReports(
                 $reportable,
@@ -72,8 +83,12 @@ class ModerationService
 
         $reportable = $report->reportable;
 
-        if (! $reportable instanceof Post && ! $reportable instanceof Comment) {
+        if (! $reportable instanceof Post && ! $reportable instanceof Comment && ! $reportable instanceof User) {
             throw new InvalidArgumentException('Reported content is no longer available.');
+        }
+
+        if ($reportable instanceof User && $reportable->is($admin)) {
+            throw new InvalidArgumentException('You cannot delete your own account from a report.');
         }
 
         DB::transaction(function () use ($report, $admin, $reportable): void {
@@ -97,7 +112,7 @@ class ModerationService
 
         $reportable = $report->reportable;
 
-        if ($reportable instanceof Post || $reportable instanceof Comment) {
+        if ($reportable instanceof Post || $reportable instanceof Comment || $reportable instanceof User) {
             $this->resolvePendingReports(
                 $reportable,
                 ReportResolution::NoAction,
@@ -117,11 +132,8 @@ class ModerationService
         ]);
     }
 
-    /**
-     * @param  Post|Comment  $reportable
-     */
     private function resolvePendingReports(
-        Post|Comment $reportable,
+        Post|Comment|User $reportable,
         ReportResolution $resolution,
         User $admin,
         ?string $moderationReason,

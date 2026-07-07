@@ -65,6 +65,7 @@ class Report extends Model
         return match ($this->reportable_type) {
             Post::class => 'post',
             Comment::class => 'comment',
+            User::class => 'profile',
             default => 'content',
         };
     }
@@ -87,6 +88,14 @@ class Report extends Model
             return $reportable->hasImage() ? 'Image comment' : 'Comment';
         }
 
+        if ($reportable instanceof User) {
+            if ($reportable->bio) {
+                return \Illuminate\Support\Str::limit($reportable->bio, 120);
+            }
+
+            return $reportable->name;
+        }
+
         return 'Removed content';
     }
 
@@ -96,6 +105,10 @@ class Report extends Model
 
         if ($reportable instanceof Post || $reportable instanceof Comment) {
             return $reportable->author;
+        }
+
+        if ($reportable instanceof User) {
+            return $reportable;
         }
 
         return null;
