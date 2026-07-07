@@ -19,6 +19,7 @@ use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RacesController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\SeasonsController;
 use App\Http\Controllers\TeamRankingsController;
 use App\Http\Controllers\TeamsController;
@@ -47,12 +48,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/posts/{post:slug}/comments/{comment}/report', [ReportController::class, 'storeComment'])->name('posts.comments.report');
     Route::post('/users/{user}/report', [ReportController::class, 'storeProfile'])->name('users.report');
     Route::post('/moderation-notifications/{notification}/read', [ModerationNotificationController::class, 'markRead'])->name('moderation-notifications.read');
+    Route::delete('/reservations/{reservation}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
 });
 
 Route::get('/posts/{post:slug}', [PostsController::class, 'show'])->name('posts.show');
 Route::get('/services', fn () => view('services'))->name('services');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+Route::get('/reservations/slots', [ReservationController::class, 'slots'])->name('reservations.slots');
+Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
 Route::get('/teams', [TeamsController::class, 'index'])->name('teams.index');
 Route::get('/drivers', [DriversController::class, 'index'])->name('drivers.index');
 Route::get('/races', [RacesController::class, 'index'])->name('races.index');

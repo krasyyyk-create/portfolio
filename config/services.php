@@ -50,4 +50,15 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'google_calendar' => [
+        'calendar_id' => env('GOOGLE_CALENDAR_ID', 'primary'),
+        'refresh_token' => env('GOOGLE_CALENDAR_REFRESH_TOKEN'),
+        'timezone' => env('GOOGLE_CALENDAR_TIMEZONE', env('APP_TIMEZONE', 'UTC')),
+        'working_days' => [1, 2, 3, 4, 5],
+        'start_hour' => (int) env('GOOGLE_CALENDAR_START_HOUR', 9),
+        'end_hour' => (int) env('GOOGLE_CALENDAR_END_HOUR', 17),
+        'slot_duration_minutes' => (int) env('GOOGLE_CALENDAR_SLOT_MINUTES', 60),
+        'advance_days' => (int) env('GOOGLE_CALENDAR_ADVANCE_DAYS', 30),
+    ],
+
 ];

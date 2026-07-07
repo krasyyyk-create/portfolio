@@ -4,6 +4,7 @@
         ['route' => 'projects', 'label' => 'projects', 'path' => '/projects'],
         ['route' => 'posts.index', 'label' => 'posts', 'path' => '/posts'],
         ['route' => 'services', 'label' => 'services', 'path' => '/services'],
+        ['route' => 'reservations.index', 'label' => 'book', 'path' => '/reservations'],
         ['route' => 'contact.index', 'label' => 'contact', 'path' => '/contact'],
     ];
 @endphp

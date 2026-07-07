@@ -101,6 +101,11 @@ class User extends Authenticatable
         return $this->hasMany(ModerationNotification::class);
     }
 
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
     /**
      * @return Attribute<?string, never>
      */
