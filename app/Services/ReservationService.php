@@ -99,6 +99,27 @@ class ReservationService
         });
     }
 
+    public function syncToGoogleCalendar(Reservation $reservation): bool
+    {
+        if (! $this->googleCalendar->isConfigured() || $reservation->status !== ReservationStatus::Confirmed) {
+            return false;
+        }
+
+        if (filled($reservation->google_event_id)) {
+            return true;
+        }
+
+        $eventId = $this->googleCalendar->createEvent($reservation);
+
+        if (blank($eventId)) {
+            return false;
+        }
+
+        $reservation->update(['google_event_id' => $eventId]);
+
+        return true;
+    }
+
     private function assertSlotIsBookable(Carbon $startsAt, Carbon $endsAt): void
     {
         if (! $this->isBookableDate($startsAt)) {

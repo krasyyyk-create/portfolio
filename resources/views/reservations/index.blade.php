@@ -10,6 +10,7 @@
             slotDurationMinutes: {{ $slotDurationMinutes }},
             formStatus: {{ session('success') ? "'success'" : "'idle'" }},
             successMessage: {{ Js::from(session('success', '')) }},
+            warningMessage: {{ Js::from(session('warning', '')) }},
             async loadSlots() {
                 this.loadingSlots = true;
                 this.slotError = null;
@@ -140,6 +141,7 @@
                 </div>
                 <h2 class="font-sans text-2xl font-bold text-white">Reservation Confirmed</h2>
                 <p class="font-sans text-white/70" x-text="successMessage"></p>
+                <p x-show="warningMessage" x-text="warningMessage" class="font-sans text-sm text-amber-300/90 bg-amber-500/10 border border-amber-400/20 rounded-xl px-4 py-3"></p>
                 <button
                     type="button"
                     @click="formStatus = 'idle'; loadSlots()"

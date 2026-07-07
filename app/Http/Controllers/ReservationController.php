@@ -67,9 +67,15 @@ class ReservationController extends Controller
                 ->withErrors(['starts_at' => $exception->getMessage()]);
         }
 
-        return redirect()
+        $redirect = redirect()
             ->route('reservations.index')
             ->with('success', 'Your '.$reservation->starts_at->timezone(config('services.google_calendar.timezone', config('app.timezone')))->format('M j, Y \a\t g:i A').' consultation has been booked.');
+
+        if (app(GoogleCalendarService::class)->isConfigured() && blank($reservation->google_event_id)) {
+            $redirect->with('warning', 'Your reservation was saved, but it could not be synced to Google Calendar. Please contact support or try again later.');
+        }
+
+        return $redirect;
     }
 
     public function destroy(Reservation $reservation, ReservationService $reservations): RedirectResponse

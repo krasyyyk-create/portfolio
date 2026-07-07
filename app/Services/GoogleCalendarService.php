@@ -16,9 +16,9 @@ class GoogleCalendarService
 
     public function isConfigured(): bool
     {
-        return filled(config('services.google.client_id'))
-            && filled(config('services.google.client_secret'))
-            && filled(config('services.google_calendar.refresh_token'));
+        $path = $this->credentialsPath();
+
+        return filled($path) && is_readable($path);
     }
 
     /**
@@ -122,38 +122,35 @@ class GoogleCalendarService
             return $this->calendar;
         }
 
-        $refreshToken = (string) config('services.google_calendar.refresh_token');
+        $credentialsPath = $this->credentialsPath();
 
-        if (str_starts_with($refreshToken, 'ya29.')) {
+        if (blank($credentialsPath) || ! is_readable($credentialsPath)) {
             throw new \RuntimeException(
-                'GOOGLE_CALENDAR_REFRESH_TOKEN contains an access token (ya29.*). '
-                .'Run `php artisan google:calendar-token` to obtain a refresh token instead.'
+                'Google Calendar credentials file is missing or unreadable. '
+                .'Set GOOGLE_CALENDAR_CREDENTIALS in your .env file.'
             );
         }
 
         $client = new GoogleClient;
-        $client->setClientId(config('services.google.client_id'));
-        $client->setClientSecret(config('services.google.client_secret'));
-        $client->setAccessType('offline');
-        $client->setPrompt('consent');
+        $client->setAuthConfig($credentialsPath);
         $client->setScopes([Calendar::CALENDAR]);
 
-        $token = $client->fetchAccessTokenWithRefreshToken($refreshToken);
+        return $this->calendar = new Calendar($client);
+    }
 
-        if (! is_array($token) || isset($token['error'])) {
-            $message = is_array($token)
-                ? ($token['error_description'] ?? $token['error'] ?? 'Unknown OAuth error')
-                : 'Google OAuth did not return an access token.';
+    private function credentialsPath(): ?string
+    {
+        $path = config('services.google_calendar.credentials');
 
-            throw new \RuntimeException(
-                'Google Calendar authentication failed: '.$message
-                .'. Run `php artisan google:calendar-token` to generate a new refresh token.'
-            );
+        if (blank($path)) {
+            return null;
         }
 
-        $client->setAccessToken($token);
+        if (! str_starts_with($path, '/') && ! preg_match('/^[A-Za-z]:[\\\\\/]/', $path)) {
+            $path = base_path($path);
+        }
 
-        return $this->calendar = new Calendar($client);
+        return $path;
     }
 
     private function calendarId(): string
