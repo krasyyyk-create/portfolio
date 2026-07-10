@@ -242,12 +242,58 @@ select {
     border-radius: 0.25rem;
 }
 
-@keyframes easter-egg-drive {
-    from {
-        transform: translateX(-10px) scale(1);
+.easter-egg-car-wrap {
+    position: relative;
+    width: min(14rem, 85%);
+    z-index: 20;
+    will-change: transform;
+}
+
+.easter-egg-car-img {
+    filter: drop-shadow(0 8px 24px rgba(239, 68, 68, 0.45));
+}
+
+.easter-egg-car-wrap--vibrate {
+    animation: easter-egg-vibrate 0.07s linear infinite;
+}
+
+.easter-egg-car-wrap--launch {
+    position: fixed;
+    left: 50%;
+    z-index: 70;
+    margin: 0;
+    animation: easter-egg-launch 2s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+}
+
+@keyframes easter-egg-vibrate {
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0deg);
     }
 
-    to {
-        transform: translateX(10px) scale(1.06);
+    25% {
+        transform: translate(-3px, 1px) rotate(-0.8deg);
+    }
+
+    50% {
+        transform: translate(3px, -1px) rotate(0.8deg);
+    }
+
+    75% {
+        transform: translate(-2px, -1px) rotate(-0.4deg);
+    }
+}
+
+@keyframes easter-egg-launch {
+    0% {
+        transform: translateX(-50%) translate(0, 0) scale(1);
+    }
+
+    8% {
+        transform: translateX(-50%) translate(-20px, 0) scale(0.98);
+    }
+
+    100% {
+        transform: translateX(calc(-50% + 130vw)) translate(0, 0) scale(1.04);
     }
 }

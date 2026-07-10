@@ -87,5 +87,9 @@
                 @endforeach
             </div>
         </div>
+
+        <x-admin.minigames-launcher />
+
+        <x-admin.minigames-leaderboard />
     </div>
 </x-layouts.admin>

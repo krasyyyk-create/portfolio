@@ -1,9 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ChatController as AdminChatController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\LeaderboardController;
+use App\Http\Controllers\Admin\PongController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ReportedContentController;
+use App\Http\Controllers\Admin\TicTacToeController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CircuitsController;
@@ -98,4 +102,27 @@ Route::prefix('admin')
         Route::post('/reported/{report}/draft', [ReportedContentController::class, 'draft'])->name('reported.draft');
         Route::post('/reported/{report}/dismiss', [ReportedContentController::class, 'dismiss'])->name('reported.dismiss');
         Route::delete('/reported/{report}', [ReportedContentController::class, 'destroy'])->name('reported.destroy');
+
+        Route::get('/chat', [AdminChatController::class, 'index'])->name('chat.index');
+        Route::get('/chat/messages', [AdminChatController::class, 'messages'])->name('chat.messages');
+        Route::post('/chat/messages', [AdminChatController::class, 'storeMessage'])->name('chat.messages.store');
+
+        Route::get('/tic-tac-toe/admins', [TicTacToeController::class, 'admins'])->name('tic-tac-toe.admins');
+        Route::get('/tic-tac-toe/invites', [TicTacToeController::class, 'invites'])->name('tic-tac-toe.invites');
+        Route::post('/tic-tac-toe/invite', [TicTacToeController::class, 'invite'])->name('tic-tac-toe.invite');
+        Route::post('/tic-tac-toe/{game}/accept', [TicTacToeController::class, 'accept'])->name('tic-tac-toe.accept');
+        Route::post('/tic-tac-toe/{game}/decline', [TicTacToeController::class, 'decline'])->name('tic-tac-toe.decline');
+        Route::get('/tic-tac-toe/{game}', [TicTacToeController::class, 'show'])->name('tic-tac-toe.show');
+        Route::post('/tic-tac-toe/{game}/move', [TicTacToeController::class, 'move'])->name('tic-tac-toe.move');
+
+        Route::get('/pong/admins', [PongController::class, 'admins'])->name('pong.admins');
+        Route::get('/pong/invites', [PongController::class, 'invites'])->name('pong.invites');
+        Route::post('/pong/invite', [PongController::class, 'invite'])->name('pong.invite');
+        Route::post('/pong/{game}/accept', [PongController::class, 'accept'])->name('pong.accept');
+        Route::post('/pong/{game}/decline', [PongController::class, 'decline'])->name('pong.decline');
+        Route::get('/pong/{game}', [PongController::class, 'show'])->name('pong.show');
+        Route::post('/pong/{game}/paddle', [PongController::class, 'paddle'])->name('pong.paddle');
+
+        Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
+        Route::post('/leaderboard', [LeaderboardController::class, 'store'])->name('leaderboard.store');
     });

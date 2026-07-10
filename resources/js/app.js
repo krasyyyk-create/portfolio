@@ -1,13 +1,25 @@
 import Alpine from 'alpinejs';
+import adminMinigamesHub from './adminMinigamesHub';
 import avatarCropper from './avatarCropper';
 import bannerCropper from './bannerCropper';
+import minigamesLeaderboard from './minigamesLeaderboard';
+import minesweeperGame from './minesweeperGame';
+import pongGame from './pongGame';
+import snakeGame from './snakeGame';
+import ticTacToeGame from './ticTacToeGame';
 import wysiwygEditor from './wysiwygEditor';
 import 'cropperjs/dist/cropper.css';
 
 window.Alpine = Alpine;
 
+Alpine.data('adminMinigamesHub', adminMinigamesHub);
 Alpine.data('avatarCropper', avatarCropper);
 Alpine.data('bannerCropper', bannerCropper);
+Alpine.data('minigamesLeaderboard', minigamesLeaderboard);
+Alpine.data('minesweeperGame', minesweeperGame);
+Alpine.data('pongGame', pongGame);
+Alpine.data('snakeGame', snakeGame);
+Alpine.data('ticTacToeGame', ticTacToeGame);
 Alpine.data('wysiwygEditor', wysiwygEditor);
 
 Alpine.data('terminalOverlay', () => ({

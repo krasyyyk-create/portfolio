@@ -106,6 +106,11 @@ class User extends Authenticatable
         return $this->hasMany(Reservation::class);
     }
 
+    public function adminChatMessages(): HasMany
+    {
+        return $this->hasMany(AdminChatMessage::class);
+    }
+
     /**
      * @return Attribute<?string, never>
      */

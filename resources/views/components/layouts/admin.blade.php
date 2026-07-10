@@ -5,6 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -80,6 +81,7 @@
                 <a href="{{ route('admin.users.index') }}" @class(['flex-1 text-center font-mono text-xs py-3 transition-colors', 'text-indigo-400 border-b-2 border-indigo-400' => request()->routeIs('admin.users.*'), 'text-white/50' => ! request()->routeIs('admin.users.*')])>users</a>
                 <a href="{{ route('admin.posts.index') }}" @class(['flex-1 text-center font-mono text-xs py-3 transition-colors', 'text-indigo-400 border-b-2 border-indigo-400' => request()->routeIs('admin.posts.*'), 'text-white/50' => ! request()->routeIs('admin.posts.*')])>posts</a>
                 <a href="{{ route('admin.reported.index') }}" @class(['flex-1 text-center font-mono text-xs py-3 transition-colors', 'text-indigo-400 border-b-2 border-indigo-400' => request()->routeIs('admin.reported.*'), 'text-white/50' => ! request()->routeIs('admin.reported.*')])>reported</a>
+                <a href="{{ route('admin.chat.index') }}" @class(['flex-1 text-center font-mono text-xs py-3 transition-colors', 'text-indigo-400 border-b-2 border-indigo-400' => request()->routeIs('admin.chat.*'), 'text-white/50' => ! request()->routeIs('admin.chat.*')])>chat</a>
             </nav>
 
             <main class="flex-1 p-6 md:p-8 overflow-auto">
@@ -101,5 +103,7 @@
             </main>
         </div>
     </div>
+
+    <x-admin.minigames-hub />
 </body>
 </html>
