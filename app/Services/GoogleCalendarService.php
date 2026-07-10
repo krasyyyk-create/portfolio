@@ -16,9 +16,100 @@ class GoogleCalendarService
 
     public function isConfigured(): bool
     {
-        $path = $this->credentialsPath();
+        return $this->resolveCredentials() !== null;
+    }
 
-        return filled($path) && is_readable($path);
+    public function serviceAccountEmail(): ?string
+    {
+        $credentials = $this->resolveCredentials();
+
+        if (is_array($credentials)) {
+            return $credentials['client_email'] ?? null;
+        }
+
+        if (! is_string($credentials) || ! is_readable($credentials)) {
+            return null;
+        }
+
+        $json = json_decode((string) file_get_contents($credentials), true);
+
+        return is_array($json) ? ($json['client_email'] ?? null) : null;
+    }
+
+    public function calendarLabel(): string
+    {
+        if (! $this->isConfigured()) {
+            return 'not configured';
+        }
+
+        try {
+            $calendar = $this->calendarService()->calendars->get($this->calendarId());
+
+            return (string) ($calendar->getSummary() ?: $this->calendarId());
+        } catch (\Throwable) {
+            return $this->calendarId();
+        }
+    }
+
+    /**
+     * @return array{ok: bool, message: string, calendar?: string, service_account?: string}
+     */
+    public function verify(): array
+    {
+        if (! $this->isConfigured()) {
+            return [
+                'ok' => false,
+                'message' => 'Google Calendar credentials are missing. Set GOOGLE_CALENDAR_CREDENTIALS to a service-account JSON file, or GOOGLE_CALENDAR_CREDENTIALS_JSON for production deployments.',
+            ];
+        }
+
+        $serviceAccount = $this->serviceAccountEmail();
+        $calendarId = $this->calendarId();
+
+        try {
+            $reservation = new Reservation([
+                'name' => 'Calendar Connection Test',
+                'email' => 'calendar-test@example.com',
+                'starts_at' => now($this->timezone())->addWeek()->startOfHour(),
+                'ends_at' => now($this->timezone())->addWeek()->startOfHour()->addHour(),
+                'notes' => 'Automatic connectivity test — safe to delete.',
+            ]);
+            $reservation->id = 0;
+
+            $eventId = $this->createEvent($reservation);
+
+            if (blank($eventId)) {
+                return [
+                    'ok' => false,
+                    'message' => 'Credentials loaded, but Google rejected event creation. Share your calendar with the service account and confirm GOOGLE_CALENDAR_ID is correct.',
+                    'calendar' => $calendarId,
+                    'service_account' => $serviceAccount,
+                ];
+            }
+
+            $this->deleteEvent($eventId);
+            $calendarLabel = $this->calendarLabel();
+
+            $message = "Successfully created a test event on \"{$calendarLabel}\".";
+
+            if (str_contains($calendarId, '@group.calendar.google.com')) {
+                $message .= ' Bookings are saved to this separate calendar — enable it under "My calendars" in Google Calendar, or point GOOGLE_CALENDAR_ID at your personal Gmail after sharing it with the service account.';
+            }
+
+            return [
+                'ok' => true,
+                'message' => $message,
+                'calendar' => $calendarLabel,
+                'service_account' => $serviceAccount,
+            ];
+        } catch (\Throwable $exception) {
+            return [
+                'ok' => false,
+                'message' => $exception->getMessage(),
+                'calendar' => $calendarId,
+                'service_account' => $serviceAccount,
+            ];
+        }
     }
 
     /**
@@ -122,24 +213,35 @@ class GoogleCalendarService
             return $this->calendar;
         }
 
-        $credentialsPath = $this->credentialsPath();
+        $credentials = $this->resolveCredentials();
 
-        if (blank($credentialsPath) || ! is_readable($credentialsPath)) {
+        if ($credentials === null) {
             throw new \RuntimeException(
-                'Google Calendar credentials file is missing or unreadable. '
-                .'Set GOOGLE_CALENDAR_CREDENTIALS in your .env file.'
+                'Google Calendar credentials are missing. '
+                .'Set GOOGLE_CALENDAR_CREDENTIALS or GOOGLE_CALENDAR_CREDENTIALS_JSON in your .env file.'
             );
         }
 
         $client = new GoogleClient;
-        $client->setAuthConfig($credentialsPath);
+        $client->setAuthConfig($credentials);
         $client->setScopes([Calendar::CALENDAR]);
 
         return $this->calendar = new Calendar($client);
     }
 
-    private function credentialsPath(): ?string
+    /**
+     * @return array<string, mixed>|string|null
+     */
+    private function resolveCredentials(): array|string|null
     {
+        $json = config('services.google_calendar.credentials_json');
+
+        if (filled($json)) {
+            $decoded = json_decode($json, true);
+
+            return is_array($decoded) ? $decoded : null;
+        }
+
         $path = config('services.google_calendar.credentials');
 
         if (blank($path)) {
@@ -150,7 +252,7 @@ class GoogleCalendarService
             $path = base_path($path);
         }
 
-        return $path;
+        return is_readable($path) ? $path : null;
     }
 
     private function calendarId(): string

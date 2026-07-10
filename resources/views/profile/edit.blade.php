@@ -192,21 +192,6 @@
                     SAVE ACCOUNT
                 </button>
             </form>
-
-            <div class="pt-6 border-t border-white/10">
-                <h2 class="font-mono text-sm font-bold text-white flex items-center gap-2 mb-4">
-                    <span class="text-indigo-400">&gt;</span> SESSION
-                </h2>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button
-                        type="submit"
-                        class="font-mono text-sm text-white/60 hover:text-white border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 px-6 py-3 rounded-lg transition-all cursor-pointer"
-                    >
-                        &gt; logout
-                    </button>
-                </form>
-            </div>
         </div>
     </div>
 </x-layouts.app>

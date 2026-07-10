@@ -26,6 +26,8 @@
 
     <x-footer />
 
+    <x-admin-panel-button />
+
     <x-terminal-overlay />
 
     <x-moderation-notice :notifications="$moderationNotifications" />

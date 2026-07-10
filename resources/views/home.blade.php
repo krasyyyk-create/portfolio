@@ -91,7 +91,7 @@
         </section>
 
         {{-- Stats grid --}}
-        <section class="space-y-6">
+        <section class="space-y-6 mb-2">
             <div class="space-y-2">
                 <h2 class="font-mono text-lg font-bold text-white flex items-center gap-2">
                     <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
@@ -179,7 +179,7 @@
         </section>
 
         {{-- Self test --}}
-        <section class="glass-card p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-6 shadow-xl relative overflow-hidden">
+        <section class="glass-card p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-6 shadow-xl relative overflow-hidden mt-2">
             <div class="absolute top-0 left-0 w-32 h-32 bg-indigo-500/5 rounded-full -ml-12 -mt-12"></div>
             <div class="flex items-start gap-4 relative z-10">
                 <div class="p-3 bg-white/5 border border-white/10 rounded-lg">

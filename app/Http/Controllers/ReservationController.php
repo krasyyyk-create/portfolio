@@ -20,6 +20,9 @@ class ReservationController extends Controller
             'timezone' => config('services.google_calendar.timezone', config('app.timezone', 'UTC')),
             'slotDurationMinutes' => (int) config('services.google_calendar.slot_duration_minutes', 60),
             'googleCalendarConnected' => app(GoogleCalendarService::class)->isConfigured(),
+            'googleCalendarLabel' => app(GoogleCalendarService::class)->isConfigured()
+                ? app(GoogleCalendarService::class)->calendarLabel()
+                : null,
         ]);
     }
 
@@ -71,8 +74,12 @@ class ReservationController extends Controller
             ->route('reservations.index')
             ->with('success', 'Your '.$reservation->starts_at->timezone(config('services.google_calendar.timezone', config('app.timezone')))->format('M j, Y \a\t g:i A').' consultation has been booked.');
 
-        if (app(GoogleCalendarService::class)->isConfigured() && blank($reservation->google_event_id)) {
-            $redirect->with('warning', 'Your reservation was saved, but it could not be synced to Google Calendar. Please contact support or try again later.');
+        $googleCalendar = app(GoogleCalendarService::class);
+
+        if (! $googleCalendar->isConfigured()) {
+            $redirect->with('warning', 'Your reservation was saved, but Google Calendar is not configured on this server. Events will not appear in your calendar until credentials are set up.');
+        } elseif (blank($reservation->google_event_id)) {
+            $redirect->with('warning', 'Your reservation was saved, but it could not be synced to Google Calendar. Run php artisan google-calendar:verify for setup help.');
         }
 
         return $redirect;

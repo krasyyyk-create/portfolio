@@ -40,14 +40,6 @@
         <div class="flex items-center gap-3 md:gap-4 shrink-0">
             @auth
                 <div class="hidden md:flex items-center gap-3">
-                    @if (auth()->user()->isAdmin())
-                        <a
-                            href="{{ route('admin.dashboard') }}"
-                            class="font-mono text-sm text-indigo-400 hover:text-indigo-300 border border-indigo-400/30 hover:border-indigo-400/50 bg-indigo-500/10 hover:bg-indigo-500/20 px-4 py-2 rounded-lg transition-all whitespace-nowrap"
-                        >
-                            &gt; admin
-                        </a>
-                    @endif
                     <div x-data="{ open: false }" class="relative">
                         <button
                             type="button"
@@ -101,6 +93,16 @@
                             >
                                 &gt; edit profile
                             </a>
+                            <div class="my-1 border-t border-white/10"></div>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button
+                                    type="submit"
+                                    class="block w-full text-left px-4 py-2.5 font-mono text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                                >
+                                    &gt; logout
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

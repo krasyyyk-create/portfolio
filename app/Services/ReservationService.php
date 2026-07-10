@@ -65,7 +65,7 @@ class ReservationService
 
         return DB::transaction(function () use ($data, $startsAt, $endsAt) {
             $reservation = Reservation::query()->create([
-                'user_id' => $data['user']?->id,
+                'user_id' => ($data['user'] ?? null)?->id,
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'starts_at' => $startsAt,

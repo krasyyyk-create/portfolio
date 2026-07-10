@@ -60,6 +60,16 @@
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 font-mono text-xs text-white/70 hover:text-white hover:bg-white/5 transition-colors">
                                 &gt; edit profile
                             </a>
+                            <div class="my-1 border-t border-white/10"></div>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button
+                                    type="submit"
+                                    class="block w-full text-left px-4 py-2 font-mono text-xs text-white/70 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                                >
+                                    &gt; logout
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

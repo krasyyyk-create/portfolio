@@ -85,7 +85,7 @@
                     @if ($googleCalendarConnected)
                         <li class="flex items-start gap-3">
                             <svg class="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-emerald-300/90">Synced with Google Calendar for real-time availability</span>
+                            <span class="text-emerald-300/90">Synced with Google Calendar ({{ $googleCalendarLabel }}) for real-time availability</span>
                         </li>
                     @endif
                 </ul>

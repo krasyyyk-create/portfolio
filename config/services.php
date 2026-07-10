@@ -52,7 +52,8 @@ return [
 
     'google_calendar' => [
         'credentials' => env('GOOGLE_CALENDAR_CREDENTIALS'),
-        'calendar_id' => env('GOOGLE_CALENDAR_ID', 'primary'),
+        'credentials_json' => env('GOOGLE_CALENDAR_CREDENTIALS_JSON'),
+        'calendar_id' => env('GOOGLE_CALENDAR_ID', env('CONTACT_EMAIL', 'primary')),
         'timezone' => env('GOOGLE_CALENDAR_TIMEZONE', env('APP_TIMEZONE', 'UTC')),
         'working_days' => [1, 2, 3, 4, 5],
         'start_hour' => (int) env('GOOGLE_CALENDAR_START_HOUR', 9),

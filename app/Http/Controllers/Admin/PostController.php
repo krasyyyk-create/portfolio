@@ -11,10 +11,19 @@ use Illuminate\View\View;
 
 class PostController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
+        $search = trim((string) $request->query('q', ''));
+
+        $posts = Post::with(['author', 'categories'])
+            ->when($search !== '', fn ($query) => $query->search($search))
+            ->orderedForDisplay()
+            ->paginate(15)
+            ->withQueryString();
+
         return view('admin.posts.index', [
-            'posts' => Post::with(['author', 'categories'])->orderedForDisplay()->paginate(15),
+            'posts' => $posts,
+            'search' => $search,
         ]);
     }
 
