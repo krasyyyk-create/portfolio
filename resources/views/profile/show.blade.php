@@ -1,6 +1,6 @@
-<x-layouts.app :title="'DEV_ARCHITECT — ' . $user->name">
+<x-layouts.app :title="'VERTEX — ' . $user->name">
     <div class="max-w-4xl mx-auto space-y-10">
-        <x-profile.header :user="$user" :is-owner="$isOwner" />
+        <x-profile.header :user="$user" :is-owner="$isOwner" :is-following="$isFollowing" />
 
         <section class="space-y-6">
             <h2 class="font-mono text-sm font-bold text-white flex items-center gap-2">

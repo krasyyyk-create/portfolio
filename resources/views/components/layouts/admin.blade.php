@@ -1,4 +1,4 @@
-@props(['title' => 'Admin — DEV_ARCHITECT'])
+@props(['title' => 'Admin — VERTEX'])
 
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -21,7 +21,7 @@
         <div class="flex-1 flex flex-col min-w-0">
             <header class="h-16 border-b border-white/10 bg-white/5 backdrop-blur-xl flex items-center justify-between px-6 md:px-8 shrink-0">
                 <div class="font-mono text-xs text-white/50">
-                    <span class="text-indigo-400">admin@</span>dev_architect<span class="text-white/30">:~$</span>
+                    <span class="text-indigo-400">admin@</span>vertex<span class="text-white/30">:~$</span>
                     <span class="text-white/70">{{ $header ?? 'dashboard' }}</span>
                 </div>
 

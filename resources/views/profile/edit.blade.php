@@ -1,4 +1,4 @@
-<x-layouts.app title="DEV_ARCHITECT — Edit Profile">
+<x-layouts.app title="VERTEX — Edit Profile">
     <div class="max-w-2xl mx-auto">
         <header class="mb-6 space-y-4">
             <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 border border-white/10 rounded-full font-mono text-xs text-white/95 backdrop-blur-md">

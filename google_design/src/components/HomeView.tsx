@@ -28,12 +28,12 @@ export default function HomeView({ setActiveScreen }: HomeViewProps) {
     ],
     'whoami': [
       'systems_architect.bin',
-      'Name: DEV_ARCHITECT',
+      'Name: VERTEX',
       'Focus: Robust, high-concurrency cloud environments & edge topologies.',
       'Core Mission: Designing bulletproof backends with millisecond-level precision.'
     ],
     'neofetch': [
-      'DEV_ARCHITECT@CoreSystemOS',
+      'VERTEX@CoreSystemOS',
       '-------------------------',
       'OS: Kubernetes v1.29 / Alpine Linux',
       'Kernel: Custom-RT-Scheduler-6.1',

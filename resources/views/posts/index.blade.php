@@ -1,4 +1,4 @@
-<x-layouts.app title="DEV_ARCHITECT — Posts">
+<x-layouts.app title="VERTEX — Posts">
     <div class="space-y-10">
         <div class="space-y-3">
             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -40,6 +40,9 @@
             @if ($activeCategory)
                 <input type="hidden" name="category" value="{{ $activeCategory->slug }}">
             @endif
+            @if (($feed ?? 'all') === 'following')
+                <input type="hidden" name="feed" value="following">
+            @endif
 
             <label for="post-search" class="sr-only">Search posts</label>
             <div class="relative flex-grow">
@@ -65,7 +68,10 @@
                 </button>
                 @if ($search !== '')
                     <a
-                        href="{{ route('posts.index', $activeCategory ? ['category' => $activeCategory->slug] : []) }}"
+                        href="{{ route('posts.index', array_filter([
+                            'category' => $activeCategory?->slug,
+                            'feed' => ($feed ?? 'all') === 'following' ? 'following' : null,
+                        ])) }}"
                         class="inline-flex items-center justify-center font-mono text-sm text-white/60 hover:text-white border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all"
                     >
                         clear
@@ -74,10 +80,45 @@
             </div>
         </form>
 
+        @auth
+            <div class="flex flex-wrap items-center gap-2">
+                <a
+                    href="{{ route('posts.index', array_filter([
+                        'q' => $search ?: null,
+                        'category' => $activeCategory?->slug,
+                    ])) }}"
+                    @class([
+                        'inline-flex font-mono text-xs px-3 py-1.5 rounded-full border transition-colors',
+                        'bg-indigo-500/20 text-white border-indigo-400/30' => ($feed ?? 'all') !== 'following',
+                        'bg-white/5 text-white/60 border-white/10 hover:text-white hover:bg-white/10' => ($feed ?? 'all') === 'following',
+                    ])
+                >
+                    all posts
+                </a>
+                <a
+                    href="{{ route('posts.index', array_filter([
+                        'feed' => 'following',
+                        'q' => $search ?: null,
+                        'category' => $activeCategory?->slug,
+                    ])) }}"
+                    @class([
+                        'inline-flex font-mono text-xs px-3 py-1.5 rounded-full border transition-colors',
+                        'bg-indigo-500/20 text-white border-indigo-400/30' => ($feed ?? 'all') === 'following',
+                        'bg-white/5 text-white/60 border-white/10 hover:text-white hover:bg-white/10' => ($feed ?? 'all') !== 'following',
+                    ])
+                >
+                    following
+                </a>
+            </div>
+        @endauth
+
         @if ($categories->isNotEmpty())
             <div class="flex flex-wrap items-center gap-2">
                 <a
-                    href="{{ route('posts.index', $search ? ['q' => $search] : []) }}"
+                    href="{{ route('posts.index', array_filter([
+                        'q' => $search ?: null,
+                        'feed' => ($feed ?? 'all') === 'following' ? 'following' : null,
+                    ])) }}"
                     @class([
                         'inline-flex font-mono text-xs px-3 py-1.5 rounded-full border transition-colors',
                         'bg-indigo-500/20 text-white border-indigo-400/30' => ! $activeCategory,
@@ -91,6 +132,7 @@
                         href="{{ route('posts.index', array_filter([
                             'category' => $category->slug,
                             'q' => $search ?: null,
+                            'feed' => ($feed ?? 'all') === 'following' ? 'following' : null,
                         ])) }}"
                         @class([
                             'inline-flex font-mono text-xs px-3 py-1.5 rounded-full border transition-colors',
@@ -111,10 +153,20 @@
                 @if ($activeCategory)
                     in <span class="text-indigo-300">{{ $activeCategory->name }}</span>
                 @endif
+                @if (($feed ?? 'all') === 'following')
+                    from people you follow
+                @endif
             </p>
         @elseif ($activeCategory)
             <p class="font-mono text-xs text-white/50">
                 Showing posts in <span class="text-indigo-300">{{ $activeCategory->name }}</span>
+                @if (($feed ?? 'all') === 'following')
+                    from people you follow
+                @endif
+            </p>
+        @elseif (($feed ?? 'all') === 'following')
+            <p class="font-mono text-xs text-white/50">
+                Showing posts from people you follow
             </p>
         @endif
 
@@ -125,6 +177,8 @@
                         No posts match your search.
                     @elseif ($activeCategory)
                         No posts in this category yet.
+                    @elseif (($feed ?? 'all') === 'following')
+                        No posts from people you follow yet. Visit user profiles and follow authors to see their posts here.
                     @else
                         No posts published yet. Check back soon.
                     @endif

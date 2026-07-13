@@ -22,12 +22,12 @@ export default function Footer({ setActiveScreen }: FooterProps) {
           }}
           className="font-mono text-xl font-bold text-white cursor-pointer hover:text-indigo-400 transition-colors select-none"
         >
-          DEV_ARCHITECT
+          VERTEX
         </div>
 
         {/* Copyright notice */}
         <p className="font-sans text-sm text-white/60 text-center md:text-left">
-          &copy; 2024 DEV_ARCHITECT. Built with Systemic Precision.
+          &copy; 2024 VERTEX. Built with Systemic Precision.
         </p>
 
         {/* Links & Back to Top */}

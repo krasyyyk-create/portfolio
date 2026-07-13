@@ -59,7 +59,7 @@ $projects = [
 ];
 @endphp
 
-<x-layouts.app title="DEV_ARCHITECT — Projects">
+<x-layouts.app title="VERTEX — Projects">
     <div
         x-data="{
             filter: 'all',

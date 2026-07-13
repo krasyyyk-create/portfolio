@@ -33,7 +33,7 @@ $services = [
 ];
 @endphp
 
-<x-layouts.app title="DEV_ARCHITECT — Services">
+<x-layouts.app title="VERTEX — Services">
     <div
         x-data="{
             selectedServices: ['arch'],

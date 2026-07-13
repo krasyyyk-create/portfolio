@@ -27,6 +27,7 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\SeasonsController;
 use App\Http\Controllers\TeamRankingsController;
 use App\Http\Controllers\TeamsController;
+use App\Http\Controllers\UserFollowController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('home'))->name('home');
@@ -51,6 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/posts/{post:slug}/report', [ReportController::class, 'storePost'])->name('posts.report');
     Route::post('/posts/{post:slug}/comments/{comment}/report', [ReportController::class, 'storeComment'])->name('posts.comments.report');
     Route::post('/users/{user}/report', [ReportController::class, 'storeProfile'])->name('users.report');
+    Route::post('/users/{user}/follow', [UserFollowController::class, 'toggle'])->name('users.follow.toggle');
     Route::post('/moderation-notifications/{notification}/read', [ModerationNotificationController::class, 'markRead'])->name('moderation-notifications.read');
     Route::delete('/reservations/{reservation}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
 });

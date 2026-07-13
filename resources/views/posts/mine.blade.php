@@ -1,4 +1,4 @@
-<x-layouts.app title="DEV_ARCHITECT — My Posts">
+<x-layouts.app title="VERTEX — My Posts">
     <div class="space-y-8">
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div class="space-y-2">

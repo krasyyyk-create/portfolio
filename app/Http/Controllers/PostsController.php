@@ -10,10 +10,15 @@ use Illuminate\View\View;
 
 class PostsController extends Controller
 {
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
         $activeCategory = null;
         $search = trim((string) request('q', ''));
+        $feed = request('feed', 'all');
+
+        if ($feed === 'following' && ! auth()->check()) {
+            return redirect()->guest(route('login'));
+        }
 
         if ($categorySlug = request('category')) {
             $activeCategory = Category::where('slug', $categorySlug)->firstOrFail();
@@ -22,6 +27,13 @@ class PostsController extends Controller
         $posts = Post::published()
             ->with(['author', 'categories'])
             ->withCount(['comments', 'likes'])
+            ->when($feed === 'following', fn ($query) => $query->whereHas(
+                'author',
+                fn ($authorQuery) => $authorQuery->whereIn(
+                    'users.id',
+                    auth()->user()->following()->pluck('users.id')
+                )
+            ))
             ->when($activeCategory, fn ($query) => $query->whereHas(
                 'categories',
                 fn ($categoryQuery) => $categoryQuery->where('categories.id', $activeCategory->id)
@@ -36,6 +48,7 @@ class PostsController extends Controller
             'categories' => Category::withCount(['posts' => fn ($query) => $query->published()])->orderBy('name')->get(),
             'activeCategory' => $activeCategory,
             'search' => $search,
+            'feed' => $feed,
         ]);
     }
 

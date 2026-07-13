@@ -1,4 +1,4 @@
-<x-layouts.app title="DEV_ARCHITECT — Home">
+<x-layouts.app title="VERTEX — Home">
     <div x-data="{
         activeFileTab: 'bio',
         terminalCommand: '',
@@ -7,8 +7,8 @@
         testRunSuccess: null,
         commandMap: {
             help: ['Available commands:', '  whoami         - View system architect biography', '  neofetch       - Display tech hardware & OS info', '  skills         - List architectural proficiencies', '  clear          - Clear terminal interface', '  terraform plan - View current cloud state simulation'],
-            whoami: ['systems_architect.bin', 'Name: DEV_ARCHITECT', 'Focus: Robust, high-concurrency cloud environments & edge topologies.', 'Core Mission: Designing bulletproof backends with millisecond-level precision.'],
-            neofetch: ['DEV_ARCHITECT@CoreSystemOS', '-------------------------', 'OS: Kubernetes v1.29 / Alpine Linux', 'Kernel: Custom-RT-Scheduler-6.1', 'Uptime: 99.999% continuous', 'Shell: zsh 5.9', 'Resolution: Fluid Grid Dynamic', 'IDE: Vim / VS Code CJS Mode', 'CPU: Multi-Region Distributed Threads', 'Memory: Cache Optimized Edge Layers'],
+            whoami: ['systems_architect.bin', 'Name: VERTEX', 'Focus: Robust, high-concurrency cloud environments & edge topologies.', 'Core Mission: Designing bulletproof backends with millisecond-level precision.'],
+            neofetch: ['VERTEX@CoreSystemOS', '-------------------------', 'OS: Kubernetes v1.29 / Alpine Linux', 'Kernel: Custom-RT-Scheduler-6.1', 'Uptime: 99.999% continuous', 'Shell: zsh 5.9', 'Resolution: Fluid Grid Dynamic', 'IDE: Vim / VS Code CJS Mode', 'CPU: Multi-Region Distributed Threads', 'Memory: Cache Optimized Edge Layers'],
             skills: ['ARCHITECTURAL COMPONENT MATRIX:', '  [Cloud Providers]  AWS (EKS, Aurora), GCP (GKE, Cloud SQL), Cloudflare', '  [Container/Mesh]  Kubernetes, Docker, Linkerd, Istio, Consul', '  [Data Replication] Redis Cluster, Postgres (Drizzle, PGPool-II), Cassandra', '  [Performance Engine] Rust, Go, Node.js (Express), Bun, Edge Workers'],
             'terraform plan': ['Terraform v1.5.0', 'Refreshing Terraform state in-memory...', 'No changes. Infrastructure is perfectly in sync with state config.', 'Active resources:', '  + aws_eks_cluster.core_prod (Healthy, 3 Nodes)', '  + google_compute_global_forwarding_rule.cdn_gateway (0.0.0.0/0)', '  + postgresql_replication_group.primary_sync (Replica Lag: 2.1ms)']
         },

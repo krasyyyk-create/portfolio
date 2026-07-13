@@ -4,7 +4,7 @@
             href="{{ route('home') }}"
             class="font-mono text-xl font-bold text-white hover:text-indigo-400 transition-colors select-none"
         >
-            DEV_ARCHITECT
+            VERTEX
         </a>
 
         <div
@@ -30,7 +30,7 @@
             class="contents"
         >
             <p class="font-sans text-sm text-white/60 text-center md:text-left">
-                &copy; {{ date('Y') }} DEV_ARCHITECT. Built with Systemic
+                &copy; {{ date('Y') }} VERTEX. Built with Systemic
                 <button
                     type="button"
                     @click="

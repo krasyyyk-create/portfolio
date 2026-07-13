@@ -72,7 +72,11 @@
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
             class="relative z-10 pointer-events-auto"
-            :class="openGame === 'tic-tac-toe' ? 'w-[min(100vw-2rem,24rem)]' : 'w-[min(100vw-2rem,20rem)]'"
+            :class="{
+                'w-[min(100vw-2rem,24rem)]': openGame === 'tic-tac-toe',
+                'w-[min(100vw-2rem,32rem)]': openGame === 'snake' || openGame === 'pong',
+                'w-[min(100vw-2rem,20rem)]': openGame === 'minesweeper',
+            }"
         >
         <div class="glass-card border border-white/15 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden bg-slate-950/95">
             <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-3 bg-white/5">
@@ -90,7 +94,10 @@
                 </button>
             </div>
 
-            <div class="p-4 max-h-[70vh] overflow-y-auto">
+            <div
+                class="p-4 overflow-y-auto"
+                :class="openGame === 'snake' || openGame === 'pong' ? 'max-h-[85vh]' : 'max-h-[70vh]'"
+            >
                 <template x-if="openGame === 'snake'">
                     <div
                         x-data="snakeGame()"

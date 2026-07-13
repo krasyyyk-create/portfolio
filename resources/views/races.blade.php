@@ -1,4 +1,4 @@
-<x-layouts.app title="DEV_ARCHITECT — F1 Races">
+<x-layouts.app title="VERTEX — F1 Races">
     <div class="space-y-10">
         <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div class="space-y-3">

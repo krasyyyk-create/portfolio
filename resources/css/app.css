@@ -290,10 +290,10 @@ select {
     }
 
     8% {
-        transform: translateX(-50%) translate(-20px, 0) scale(0.98);
+        transform: translateX(-50%) translate(20px, 0) scale(0.98);
     }
 
     100% {
-        transform: translateX(calc(-50% + 130vw)) translate(0, 0) scale(1.04);
+        transform: translateX(calc(-50% - 130vw)) translate(0, 0) scale(1.04);
     }
 }

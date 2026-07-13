@@ -1,4 +1,4 @@
-<x-layouts.app title="DEV_ARCHITECT — Contact">
+<x-layouts.app title="VERTEX — Contact">
     <div
         x-data="{
             formStatus: {{ session('success') ? "'success'" : "'idle'" }},

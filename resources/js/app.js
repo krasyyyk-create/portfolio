@@ -22,11 +22,41 @@ Alpine.data('snakeGame', snakeGame);
 Alpine.data('ticTacToeGame', ticTacToeGame);
 Alpine.data('wysiwygEditor', wysiwygEditor);
 
+Alpine.data('sidebarNav', () => ({
+    open: false,
+
+    init() {
+        const saved = localStorage.getItem('sidebarOpen');
+
+        if (saved !== null) {
+            this.open = saved === 'true';
+        } else {
+            this.open = window.innerWidth >= 768;
+        }
+    },
+
+    toggle() {
+        this.open = !this.open;
+        localStorage.setItem('sidebarOpen', this.open);
+    },
+
+    close() {
+        this.open = false;
+        localStorage.setItem('sidebarOpen', 'false');
+    },
+
+    closeOnMobile() {
+        if (window.innerWidth < 768) {
+            this.close();
+        }
+    },
+}));
+
 Alpine.data('terminalOverlay', () => ({
     isOpen: false,
     inputVal: '',
     logs: [
-        'DEV_ARCHITECT OS v4.12.1-stable',
+        'VERTEX OS v4.12.1-stable',
         'Initializing secure systems socket...',
         'Authentication bypassed: Guest access granted.',
         'Type "help" to display available systems protocols.',
@@ -80,7 +110,7 @@ Alpine.data('terminalOverlay', () => ({
                 break;
             case 'neofetch':
                 response = [
-                    'DEV_ARCHITECT System Core',
+                    'VERTEX System Core',
                     '------------------------',
                     'SLA Uptime: 99.999% continuous',
                     'Active Kubernetes Nodes: 240 Nodes',

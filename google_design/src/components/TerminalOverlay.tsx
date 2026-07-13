@@ -11,7 +11,7 @@ interface TerminalOverlayProps {
 export default function TerminalOverlay({ isOpen, onClose, setActiveScreen }: TerminalOverlayProps) {
   const [inputVal, setInputVal] = useState('');
   const [logs, setLogs] = useState<string[]>([
-    'DEV_ARCHITECT OS v4.12.1-stable',
+    'VERTEX OS v4.12.1-stable',
     'Initializing secure systems socket...',
     'Authentication bypassed: Guest access granted.',
     'Type "help" to display available systems protocols.',
@@ -57,7 +57,7 @@ export default function TerminalOverlay({ isOpen, onClose, setActiveScreen }: Te
         break;
       case 'neofetch':
         response = [
-          'DEV_ARCHITECT System Core',
+          'VERTEX System Core',
           '------------------------',
           'SLA Uptime: 99.999% continuous',
           'Active Kubernetes Nodes: 240 Nodes',
@@ -143,7 +143,7 @@ export default function TerminalOverlay({ isOpen, onClose, setActiveScreen }: Te
               </div>
               <div className="font-mono text-xs text-white/40 flex items-center gap-1.5">
                 <Terminal className="w-4 h-4 text-indigo-400 animate-pulse" />
-                <span>root@dev_architect:~/gateway_node</span>
+                <span>root@vertex:~/gateway_node</span>
               </div>
             </div>
 

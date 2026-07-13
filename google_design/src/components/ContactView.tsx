@@ -43,7 +43,7 @@ export default function ContactView() {
 
     setFormStatus('transmitting');
     setTransmissionLogs([
-      'Establishing SSL connection to DEV_ARCHITECT gateway...',
+      'Establishing SSL connection to VERTEX gateway...',
       'Encrypting contact payload using RSA-4096...',
       'Verifying DNS entries and route path parameters...',
       'Routing data packets via active global CDN nodes...'

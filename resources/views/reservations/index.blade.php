@@ -1,4 +1,4 @@
-<x-layouts.app title="DEV_ARCHITECT — Reservations">
+<x-layouts.app title="VERTEX — Reservations">
     <div
         x-data="{
             selectedDate: {{ Js::from(old('starts_at') ? \Carbon\Carbon::parse(old('starts_at'))->toDateString() : now(config('services.google_calendar.timezone', config('app.timezone')))->toDateString()) }},

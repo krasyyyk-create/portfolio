@@ -21,10 +21,13 @@ class ProfileController extends Controller
             ->limit(12)
             ->get();
 
+        $user->loadCount(['followers', 'following']);
+
         return view('profile.show', [
             'user' => $user,
             'recentLikes' => $recentLikes,
             'isOwner' => auth()->id() === $user->id,
+            'isFollowing' => $user->isFollowedBy(auth()->user()),
         ]);
     }
 

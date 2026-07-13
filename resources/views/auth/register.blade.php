@@ -1,4 +1,4 @@
-<x-layouts.app title="DEV_ARCHITECT — Register">
+<x-layouts.app title="VERTEX — Register">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         {{-- Left: hero + terminal --}}
         <div class="lg:col-span-5 space-y-8">

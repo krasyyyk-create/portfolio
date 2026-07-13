@@ -21,7 +21,7 @@ export default function BladeCompanion({ activeScreen }: BladeCompanionProps) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'DEV_ARCHITECT' }}</title>
+    <title>{{ $title ?? 'VERTEX' }}</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

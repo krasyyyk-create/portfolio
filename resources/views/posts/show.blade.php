@@ -1,4 +1,4 @@
-<x-layouts.app :title="'DEV_ARCHITECT — ' . $post->title">
+<x-layouts.app :title="'VERTEX — ' . $post->title">
     <article class="max-w-3xl mx-auto space-y-8">
         <div class="space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-3">

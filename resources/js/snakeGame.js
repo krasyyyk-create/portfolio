@@ -1,6 +1,6 @@
 export default function snakeGame() {
     const GRID = 20;
-    const CELL = 16;
+    const CELL = 18;
 
     return {
         grid: GRID,

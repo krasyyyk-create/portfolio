@@ -1,12 +1,12 @@
-const WIDTH = 320;
-const HEIGHT = 180;
-const PADDLE_WIDTH = 8;
-const PADDLE_HEIGHT = 48;
-const BALL_RADIUS = 5;
+const WIDTH = 480;
+const HEIGHT = 270;
+const PADDLE_WIDTH = 12;
+const PADDLE_HEIGHT = 72;
+const BALL_RADIUS = 7;
 const WIN_SCORE = 5;
 const BALL_SPEED = 140;
-const PADDLE_MARGIN = 10;
-const BOT_SPEED = 95;
+const PADDLE_MARGIN = 15;
+const BOT_SPEED = 48;
 
 function clampPaddleY(y) {
     const half = PADDLE_HEIGHT / 2;
@@ -347,8 +347,20 @@ export default function pongGame(config) {
 
             this.leftPaddleY = clampPaddleY(this.leftPaddleY);
 
-            const botDiff = this.ballY - this.rightPaddleY;
-            this.rightPaddleY += Math.sign(botDiff) * Math.min(Math.abs(botDiff), BOT_SPEED * delta);
+            if (this.ballVx > 0) {
+                const aimError = (Math.random() - 0.5) * 48;
+                const targetY = this.ballY + aimError;
+                const botDiff = targetY - this.rightPaddleY;
+
+                if (Math.abs(botDiff) > 14) {
+                    const speed = BOT_SPEED * (0.65 + Math.random() * 0.35);
+                    this.rightPaddleY += Math.sign(botDiff) * Math.min(Math.abs(botDiff), speed * delta);
+                }
+            } else {
+                const centerDiff = (HEIGHT / 2) - this.rightPaddleY;
+                this.rightPaddleY += Math.sign(centerDiff) * Math.min(Math.abs(centerDiff), 28 * delta);
+            }
+
             this.rightPaddleY = clampPaddleY(this.rightPaddleY);
 
             this.ballX += this.ballVx * delta;

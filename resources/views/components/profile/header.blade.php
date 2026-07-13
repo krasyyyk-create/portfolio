@@ -1,4 +1,4 @@
-@props(['user', 'isOwner' => false])
+@props(['user', 'isOwner' => false, 'isFollowing' => false])
 
 <div class="rounded-2xl border border-white/10 overflow-visible bg-slate-950/30 shadow-xl">
     <div @class([
@@ -41,14 +41,33 @@
                             edit profile
                         </a>
                     @elseif (auth()->check())
-                        <x-report-button
-                            :action="route('users.report', $user)"
-                            label="Report this profile"
-                            heading="Report profile"
-                            description="Tell us why this profile should be reviewed. Reports are visible to admins only."
-                            size="md"
-                        />
+                        <div class="flex items-center gap-2 shrink-0">
+                            <x-follow-button
+                                :action="route('users.follow.toggle', $user)"
+                                :following="$isFollowing"
+                                :count="$user->followers_count"
+                            />
+                            <x-report-button
+                                :action="route('users.report', $user)"
+                                label="Report this profile"
+                                heading="Report profile"
+                                description="Tell us why this profile should be reviewed. Reports are visible to admins only."
+                                size="md"
+                            />
+                        </div>
                     @endif
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 text-white/50">
+                    <span class="font-mono text-xs">
+                        <span class="text-white/70">{{ $user->followers_count }}</span>
+                        {{ Str::plural('follower', $user->followers_count) }}
+                    </span>
+                    <span class="font-mono text-xs text-white/30">·</span>
+                    <span class="font-mono text-xs">
+                        <span class="text-white/70">{{ $user->following_count }}</span>
+                        following
+                    </span>
                 </div>
 
                 @if ($user->bio)

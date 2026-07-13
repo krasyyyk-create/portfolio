@@ -1,4 +1,4 @@
-<x-layouts.app title="DEV_ARCHITECT — New Post">
+<x-layouts.app title="VERTEX — New Post">
     <div class="max-w-3xl space-y-6">
         <div>
             <a href="{{ route('posts.mine') }}" class="font-mono text-xs text-white/40 hover:text-white transition-colors">

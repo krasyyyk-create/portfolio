@@ -17,7 +17,7 @@ export default function Navbar({ activeScreen, setActiveScreen, onTerminalToggle
           className="font-sans text-xl md:text-2xl font-bold tracking-tight text-white cursor-pointer flex items-center gap-2.5 group select-none"
         >
           <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 font-bold group-hover:rotate-12 transition-transform duration-300">D</div>
-          <span>DEV_ARCHITECT</span>
+          <span>VERTEX</span>
         </div>
 
         {/* Center Links */}
